@@ -1,0 +1,33 @@
+# 이 프로젝트를 이루는 모듈 레포 목록.
+# 문서와 스크립트에는 경로를 직접 적지 않고 여기 적힌 path_env 변수를 쓴다.
+# 로컬 경로는 사람마다 다르므로 각자 .env 에 둔다. 없으면 default_path 를 쓴다.
+#
+# ref 는 "이 커밋으로 검증했다"는 기록이다. 모듈이 바뀌어 다시 검증하면 함께 올린다.
+
+modules:
+  rfa-module:
+    owner: 윤승희
+    role: 외부게시 MCP Agent. 초안, 기밀검토, 사람 결재, 외부 채널 게시
+    repo: https://github.com/SoCAlumni/RFA_module.git
+    ref: a243c37            # main, Step 7 (2026-09-27)
+    path_env: RFA_MODULE_DIR
+    default_path: ~/git/RFA_module
+    api_docs: https://socalumni.github.io/RFA_module/
+    sandbox: rfa
+    agents: agents/rfa.yaml
+    policies:
+      - policies/rfa-host-services.yaml
+    services:
+      review:
+        port: 8790
+        contract: contracts/review.openapi.yaml
+        run: uv run uvicorn --factory review.app:create_app --host 0.0.0.0 --port 8790
+      knowledge:
+        port: 8791
+        contract: contracts/knowledge.openapi.yaml
+        run: uv run uvicorn knowledge_stub.app:app --host 0.0.0.0 --port 8791
+        note: stub. 민섭 님 구현으로 교체 예정
+      github-mcp:
+        port: 8792
+        run: uv run uvicorn --factory mcp_channels.server:create_app --port 8792
+        note: 샌드박스에 등록하려면 HTTPS 필요. 아직 안 띄움
