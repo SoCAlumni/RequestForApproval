@@ -8,6 +8,8 @@
 | [04-sandbox-setup-summary.md](04-sandbox-setup-summary.md) | 샌드박스 권한 설정 가이드. 구조 원칙, 정책 적용, 에이전트 명단, 남은 일 |
 | [05-openclaw-settings.md](05-openclaw-settings.md) | 샌드박스별 실제 설정값. OpenClaw 설정, 환경변수, 정책, gateway |
 
-함께 보는 문서: [../architecture-decisions.md](../architecture-decisions.md) 아키텍처 결정, [../ports.md](../ports.md) 포트 정리, [../sandbox-layout.html](../sandbox-layout.html) 샌드박스 배치도, [../../policies/README.md](../../policies/README.md) 정책 설명.
+03, 04, 05는 공개 쪽의 에이전트를 샌드박스에 넣던 때의 기록이다. 2026-09-27 오후에 샌드박스는 기밀 영역에만 두기로 했다. 방법과 검증 결과는 그대로 쓸 수 있고, 대상 샌드박스가 `team`으로 바뀐다.
+
+함께 보는 문서: [../milestone.md](../milestone.md) 계획, [../architecture-decisions.md](../architecture-decisions.md) 아키텍처 결정, [../ports.md](../ports.md) 포트 정리, [../sandbox-layout.html](../sandbox-layout.html) 샌드박스 배치도, [../../policies/README.md](../../policies/README.md) 정책 설명.
 
 WSL2에 설치한다면 02의 3절부터 본다. 샌드박스 권한을 설정한다면 04부터 본다.

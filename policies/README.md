@@ -2,6 +2,8 @@
 
 작성일: 2026-09-27. NemoClaw v0.0.129 기준. 근거는 RFA_module `docs/architecture.md` 4장 "Tool call 정책표".
 
+> ⚠️ 이 폴더의 정책은 공개 쪽에 샌드박스가 있던 때에 쓴 것이다. 2026-09-27 오후에 샌드박스를 기밀 영역(`team`)에만 두기로 했다 ([../docs/architecture-decisions.md](../docs/architecture-decisions.md) 15절). 아래 파일은 검증한 기록과 쓰는 법의 예로 남긴다. `team`용 정책은 `team`이 부를 호스트 주소가 정해진 뒤에 새로 쓴다. "정책을 고칠 때 지킬 것"은 그대로 적용된다.
+
 ## 파일
 
 | 파일 | 용도 | 허용 바이너리 |
