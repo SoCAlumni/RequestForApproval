@@ -55,7 +55,7 @@
   .legend li { display: flex; align-items: center; gap: 8px; }
   .legend svg { width: 38px; height: 14px; flex: none; }
 
-  .z-pub   { fill: var(--sb); stroke: var(--ink); stroke-width: 1.6; }
+  .z-pub   { fill: var(--sb); stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 4; }
   .z-conf  { fill: var(--conf); stroke: var(--ink); stroke-width: 1.6; }
   .z-host  { fill: var(--zone); stroke: var(--line); stroke-width: 1; }
   .bx      { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
@@ -92,6 +92,7 @@
   <span class="eyebrow">RequestForApproval · 2026-09-27 · 제안</span>
   <h1>RFA 에이전트 배치</h1>
   <p class="lede">에이전트는 자기가 읽는 자료의 등급에 맞는 영역에 둔다. 바깥과 닿는 대응 에이전트는 공개 영역에, 원자료를 읽는 실무 에이전트와 기준을 읽는 검열 에이전트는 기밀 영역에 둔다. 두 영역은 호스트의 API로만 이어진다.</p>
+  <p class="lede">샌드박스는 기밀 영역에만 둔다. 공개 영역의 에이전트는 샌드박스 없이 호스트에서 돈다.</p>
 </header>
 
 <figure>
@@ -105,7 +106,7 @@
 
     <!-- 영역 제목 -->
     <text class="zt" x="180" y="46">공개 영역</text>
-    <text class="s" x="430" y="46" text-anchor="end">샌드박스 public</text>
+    <text class="s" x="430" y="46" text-anchor="end">샌드박스 없음 · 호스트에서 실행</text>
     <text class="zt" x="460" y="46">호스트</text>
     <text class="zt" x="630" y="46">기밀 영역</text>
     <text class="s" x="1080" y="46" text-anchor="end">샌드박스 team</text>
@@ -131,7 +132,7 @@
     <text class="t" x="305" y="341" text-anchor="middle">대응 에이전트</text>
     <text class="s" x="305" y="362" text-anchor="middle">PRISM 개발</text>
     <text class="s" x="305" y="420" text-anchor="middle">걸러진 답변만 들어온다</text>
-    <text class="s" x="305" y="440" text-anchor="middle">바깥의 입력을 직접 읽는다</text>
+    <text class="s" x="305" y="440" text-anchor="middle">도구 없이 글만 쓴다</text>
 
     <!-- 호스트: API, 목록 -->
     <rect class="bx" x="475" y="110" width="110" height="70" rx="6"/>
@@ -228,9 +229,10 @@
     <li><svg viewBox="0 0 38 14" aria-hidden="true"><line class="a a-allow" x1="1" y1="7" x2="36" y2="7"/></svg>ORBIT 업무 한 건의 흐름 (번호 순서)</li>
     <li><svg viewBox="0 0 38 14" aria-hidden="true"><line class="a a-ink" x1="1" y1="7" x2="36" y2="7"/></svg>다른 업무도 같은 길</li>
     <li><svg viewBox="0 0 38 14" aria-hidden="true"><line class="a a-plan" x1="1" y1="7" x2="36" y2="7"/></svg>결재의 결정이 목록으로</li>
-    <li><svg viewBox="0 0 38 14" aria-hidden="true"><rect class="bx plan" x="2" y="2" width="34" height="10" rx="2"/></svg>점선은 첫 구현에서 빠짐</li>
+    <li><svg viewBox="0 0 38 14" aria-hidden="true"><rect class="bx plan" x="2" y="2" width="34" height="10" rx="2"/></svg>점선 상자는 첫 구현에서 빠짐</li>
+    <li><svg viewBox="0 0 38 14" aria-hidden="true"><rect class="z-conf" x="2" y="2" width="34" height="10" rx="2"/></svg>굵은 테두리는 샌드박스</li>
   </ul>
-  <figcaption>기밀은 검열 에이전트를 지난 뒤에만 기밀 영역을 떠난다. 공개 영역의 대응 에이전트는 바깥의 입력을 직접 읽지만 걸러진 답변만 가지고 있으므로, 속임수에 넘어가도 빼낼 기밀이 없다. 검열 에이전트는 호스트의 허용·차단 목록을 읽기만 한다.</figcaption>
+  <figcaption>기밀은 검열 에이전트를 지난 뒤에만 기밀 영역을 떠난다. 공개 영역의 대응 에이전트는 바깥의 입력을 직접 읽지만 걸러진 답변만 가지고 있으므로, 속임수에 넘어가도 빼낼 기밀이 없다. 그래서 공개 영역에는 샌드박스를 두지 않는다. 검열 에이전트는 호스트의 허용·차단 목록을 읽기만 한다.</figcaption>
 </figure>
 
 <section>
@@ -253,11 +255,27 @@
   <table>
     <thead><tr><th>에이전트</th><th>영역</th><th>수</th><th>읽는 것</th><th>내보내는 것</th></tr></thead>
     <tbody>
-      <tr><td>대응 에이전트</td><td><span class="pill pub">공개</span></td><td>업무마다 하나</td><td>바깥의 질문, 걸러진 답변</td><td>초안</td></tr>
-      <tr><td>head agent</td><td><span class="pill conf">기밀</span></td><td>하나</td><td>공개 쪽에서 온 질문, 기밀 영역의 답변</td><td>실무 에이전트에게 일을 맡김</td></tr>
+      <tr><td>대응 에이전트</td><td><span class="pill pub">공개</span> 샌드박스 없음</td><td>업무마다 하나</td><td>바깥의 질문, 걸러진 답변</td><td>초안</td></tr>
+      <tr><td>head agent</td><td><span class="pill conf">기밀</span> 샌드박스</td><td>하나</td><td>공개 쪽에서 온 질문, 기밀 영역의 답변</td><td>실무 에이전트에게 일을 맡김</td></tr>
       <tr><td>실무 에이전트</td><td><span class="pill conf">기밀</span></td><td>업무마다 하나</td><td>업무 원자료, 기억</td><td>답변 원문</td></tr>
       <tr><td>검열 에이전트 · 비기밀용</td><td><span class="pill conf">기밀</span></td><td>하나</td><td>답변 원문, 기밀 기준, 허용·차단 목록</td><td>공개로 나갈 수 있게 걸러낸 답변</td></tr>
       <tr><td>검열 에이전트 · 기밀용</td><td><span class="pill conf">기밀</span></td><td>하나</td><td>위와 같음</td><td>사내로 나갈 수 있게 걸러낸 답변. 첫 구현에서 빠짐</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>공개 영역에 샌드박스를 두지 않는 조건</h2>
+  <p>샌드박스가 없으면 프록시가 막아 주던 것을 다른 것이 대신 막아야 한다. 아래 넷이 지켜질 때만 성립한다.</p>
+  <div class="tablewrap" style="margin-top:14px">
+  <table>
+    <thead><tr><th>조건</th><th>이유</th><th>지금 상태</th></tr></thead>
+    <tbody>
+      <tr><td>공개 영역에 기밀이 들어오지 않는다</td><td>샌드박스가 없으면 나가는 길을 막을 수 없다. 빼낼 것이 없어야 한다</td><td>아직 아님. 지금은 걸러지기 전의 답변이 들어온다</td></tr>
+      <tr><td>대응 에이전트에게 도구를 주지 않는다</td><td>모델이 글만 쓰고, 어디를 부를지는 코드가 정한다. 모델이 속아도 할 수 있는 일이 없다</td><td>RFA_module의 고정 워크플로가 이 모양이다</td></tr>
+      <tr><td>승인을 출처 주소로 확인하지 않는다</td><td>호스트에서 도는 프로그램은 모두 <code>127.0.0.1</code>에서 온 것으로 보인다</td><td>아직 아님. 승인용 토큰이 필요하다</td></tr>
+      <tr><td>게시 토큰과 승인용 토큰을 공개 영역의 프로세스가 읽지 못한다</td><td>같은 호스트에서 돌기 때문에 환경변수와 파일을 나눠야 한다</td><td>확인하지 않음</td></tr>
     </tbody>
   </table>
   </div>
