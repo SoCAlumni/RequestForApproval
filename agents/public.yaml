@@ -1,5 +1,9 @@
-# 샌드박스 `rfa` 전용 에이전트 명단. 샌드박스 하나당 파일 하나를 둔다.
-#   nemoclaw onboard --name rfa --agents agents/rfa.yaml --no-gpu
+# 샌드박스 `public` 전용 에이전트 명단. 샌드박스 하나당 파일 하나를 둔다.
+#   nemoclaw onboard --name public --agents agents/public.yaml --no-gpu
+#
+# 기밀 등급: 공개. 이 샌드박스에는 기밀 검토를 통과한 내용만 들어온다.
+# 샌드박스 이름과 이 파일 이름은 기밀 등급(독자 범위)을 따른다.
+# 외부게시 모듈(RFA_module)의 에이전트가 여기서 돈다.
 #
 # 한 샌드박스 안의 에이전트들은 파일시스템과 네트워크 정책을 공유한다.
 # 여기서 나누는 것은 역할이지 보안 경계가 아니다. 기밀 구획이 다른 에이전트는

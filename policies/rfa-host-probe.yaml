@@ -1,5 +1,5 @@
 # 검증 전용. curl 로 "읽기는 통과, 결재는 차단"을 재현할 때만 적용하고 끝나면 제거한다.
-#   nemoclaw rfa policy remove rfa-host-probe --yes
+#   nemoclaw public policy remove rfa-host-probe --yes
 # 운영 정책(rfa-host-services)은 python 만 허용하므로, 이 파일 없이는 curl 요청이 전부 막힌다.
 
 preset:

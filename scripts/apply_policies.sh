@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # policies/*.yaml 의 __RFA_HOST_IP__ 를 채워 샌드박스에 적용한다.
 #
-#   RFA_HOST_IP=172.29.134.236 ./scripts/apply_policies.sh rfa            # 미리보기(dry-run)
-#   RFA_HOST_IP=172.29.134.236 ./scripts/apply_policies.sh rfa --apply    # 적용
-#   RFA_HOST_IP=... ./scripts/apply_policies.sh rfa --apply --with-probe  # 검증용 curl 정책 포함
+#   RFA_HOST_IP=172.29.134.236 ./scripts/apply_policies.sh public            # 미리보기(dry-run)
+#   RFA_HOST_IP=172.29.134.236 ./scripts/apply_policies.sh public --apply    # 적용
+#   RFA_HOST_IP=... ./scripts/apply_policies.sh public --apply --with-probe  # 검증용 curl 정책 포함
 set -euo pipefail
 
 sandbox="${1:?usage: apply_policies.sh <sandbox> [--apply] [--with-probe]}"

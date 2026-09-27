@@ -2,6 +2,8 @@
 
 > 이 가이드는 승희 님의 외부게시 모듈(RFA_module)을 NemoClaw 샌드박스에 올리기 위한 네트워크 정책과 에이전트 권한 설정을 설명합니다. 2026-09-27 작업을 정리했으며, 확인한 것과 확인하지 못한 것을 구분해 적었습니다.
 
+> ⚠️ 이 문서는 샌드박스 이름을 바꾸기 전에 썼습니다. 본문의 `rfa`는 지금의 `public`이고, `agents/rfa.yaml`은 `agents/public.yaml`입니다. 이름과 배치의 기준은 [../architecture-decisions.md](../architecture-decisions.md)입니다.
+
 제출 마감은 2026-09-28 23:59입니다. 그림은 [sandbox-layout.html](../sandbox-layout.html), 검증 로그는 [03-policy-verification.md](03-policy-verification.md)에 있습니다.
 
 ### 0. 사전 요구사항
@@ -193,7 +195,7 @@ nemoclaw onboard --name rfa --agents agents/rfa.yaml --no-gpu
 
 ### 8. 확인하지 못한 것
 
-- **승인 출처 검사.** review 서비스는 `127.0.0.1` 출처만 승인을 받는다. Docker Desktop이 요청을 대신 전달하면 샌드박스 요청이 호스트에서 `127.0.0.1`로 보일 수 있다. 그렇다면 승인 차단은 프록시 규칙 하나에 기대게 된다. uvicorn 로그에서 샌드박스 요청의 출처 주소를 보면 결론이 난다.
+- ~~승인 출처 검사~~ 확인함. `host.docker.internal`로 들어온 요청은 호스트에서 `127.0.0.1` 출처로 보여 review 서비스의 검사를 통과한다. 샌드박스에서는 네트워크 정책이 이 경로를 막고 있다. 자세한 내용은 [03-policy-verification.md](03-policy-verification.md) 5절.
 - **POST 경로.** 초안과 판정 제출은 규칙만 적용했고 실제 호출은 하지 않았다. 워크플로(Step 8)가 머지된 뒤 확인한다.
 - **도구 이름.** MCP 서버가 `github`, `workflow`로 등록된다는 전제다.
 - **도구 거부의 실제 동작.** `agents/rfa.yaml`은 NemoClaw 검증기를 통과했지만 샌드박스에 구워 보지 않았다.
@@ -213,7 +215,7 @@ nemoclaw onboard --name rfa --agents agents/rfa.yaml --no-gpu
 
 | 순서 | 일 | 조건 |
 |---|---|---|
-| 1 | uvicorn 로그로 승인 출처 검사 확인 | 지금 가능 |
+| 1 | 승인 출처 검사를 비밀값 확인으로 바꾸기 (RFA_module) | 승희 님께 전달 |
 | 2 | `rfa` 샌드박스 생성, 정책 이전, MCP 등록, 워크플로 업로드 | Step 8 머지 후 한 번에 |
 | 3 | 도구 거부 동작과 POST 경로 검증 | 2번 후 |
 | 4 | 차단 로그를 UI의 활동 타임라인에 연결 | 지금 가능 |
@@ -226,6 +228,7 @@ nemoclaw onboard --name rfa --agents agents/rfa.yaml --no-gpu
 - 민섭 님 세 업무(ORBIT 벤치마크, 양자화, PRISM)가 서로의 기억을 봐도 되는지. 봐도 되면 샌드박스 하나에 에이전트 셋, 안 되면 샌드박스를 나눈다. 미공개 수치를 다루는 업무와 공개 글을 쓰는 업무는 나누는 쪽이 원칙에 맞다
 - knowledge API가 돌려주는 내용의 범위. 원문을 그대로 주면 받는 쪽 샌드박스에 기밀이 들어온다. 공개 가능한 표현만 줄지, 원문을 주고 게시 전 기밀검토에 맡길지
 - 7절의 RFA_module 문서 수정
+- 승인 확인 방식. 출처 주소 검사는 Docker Desktop에서 `host.docker.internal` 경로로 뚫린다. 승인용 토큰으로 바꿀지
 - 제출 형식. 심사자가 레포 하나만 받아 실행해야 한다면 `modules.yaml` 대신 submodule이나 클론 순서 안내가 필요하다
 
 ### 10. 참고 사항
