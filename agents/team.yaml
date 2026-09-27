@@ -1,8 +1,9 @@
 # 샌드박스 `team` 전용 에이전트 명단. 샌드박스 하나당 파일 하나를 둔다.
-#   NEMOCLAW_GATEWAY_PORT=8090 nemoclaw onboard --name team --agents agents/team.yaml --no-gpu --control-ui-port 18791
+#   nemoclaw onboard --name team --agents agents/team.yaml --no-gpu --control-ui-port 18791
 #
 # 기밀 등급: 업무 내부. 업무 원자료와 기밀 기준을 읽는 에이전트가 여기서 돈다.
-# 추론은 로컬 Ollama 만 쓴다. 이 샌드박스의 gateway 에는 외부 제공자의 키를 등록하지 않는다.
+# 해커톤 시연에서는 외부 API(NVIDIA Endpoints)로 추론한다. 그래서 합성 자료만 넣는다.
+# 목표 구조에서는 로컬 Ollama 만 쓰고, 기밀용 gateway(8090)를 따로 둔다 (architecture-decisions.md D3, D14).
 #
 # 초안이다. 아직 샌드박스에 구워 보지 않았다.
 # MCP 도구 이름이 정해지지 않아서 지금은 파일 읽기만 허용한다.
