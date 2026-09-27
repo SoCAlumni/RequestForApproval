@@ -1,0 +1,48 @@
+# 샌드박스 `rfa` 전용 에이전트 명단. 샌드박스 하나당 파일 하나를 둔다.
+#   nemoclaw onboard --name rfa --agents agents/rfa.yaml --no-gpu
+#
+# 한 샌드박스 안의 에이전트들은 파일시스템과 네트워크 정책을 공유한다.
+# 여기서 나누는 것은 역할이지 보안 경계가 아니다. 기밀 구획이 다른 에이전트는
+# 다른 샌드박스에 두고, 샌드박스 사이의 통신은 호스트 서비스(OpenAPI)로 한다.
+#
+# 최상위 키는 agents, defaults, main 만 허용된다. cron 은 샌드박스 안에서
+# `openclaw cron add` 로 등록한다. workspace 와 model 은 적지 않는다.
+
+defaults:
+  subagents:
+    maxSpawnDepth: 1
+
+# main 은 명단에 없어도 항상 들어가고 기본값이 셸 실행까지 허용이다.
+# 이 샌드박스는 외부 입력을 다루므로 main 도 잠근다.
+main:
+  tools:
+    profile: minimal
+    deny:
+      - group:runtime    # exec, process, code_execution
+      - group:fs         # read, write, edit, apply_patch
+      - group:web
+      - group:ui
+      - group:sessions   # 다른 에이전트에게 말 걸기
+      - group:messaging
+      - group:automation
+      - group:plugins    # MCP 도구 포함
+
+agents:
+  # Public 채널 입구. 멘션을 읽어 워크플로에 넘기기만 하고 직접 글을 쓰지 않는다.
+  # 도구 이름은 <MCP 서버 이름>__<도구 이름>. 와일드카드(github__*)는 쓰지 않는다.
+  # 나중에 서버에 게시 도구가 추가돼도 자동으로 허용되지 않게 하기 위해서다.
+  - id: public-desk
+    description: "Public 채널 대응 데스크. 멘션 확인 후 workflow 에 전달"
+    tools:
+      allow:
+        - github__list_mentions
+        - github__get_thread
+        - workflow__run
+      deny:
+        - group:runtime
+        - group:fs
+        - group:web
+        - group:ui
+        - group:sessions
+        - group:messaging
+        - group:automation

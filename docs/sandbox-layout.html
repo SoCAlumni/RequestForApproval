@@ -1,0 +1,333 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RFA 샌드박스 배치</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #f2f4f3; --panel: #ffffff; --sb: #e9eeec; --zone: #e2e6ea;
+    --ink: #17211e; --muted: #5a6763; --line: #c6cfcb;
+    --allow: #1b7a4b; --allow-bg: #dff1e7;
+    --deny: #b3261e; --deny-bg: #f9e1df;
+    --plan: #8a5a00; --plan-bg: #f6ead0;
+    --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    --mono: "IBM Plex Mono", "D2Coding", ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #101513; --panel: #1a211e; --sb: #151c19; --zone: #1b2027;
+      --ink: #e5ebe8; --muted: #95a39e; --line: #35423d;
+      --allow: #62cc93; --allow-bg: #173826;
+      --deny: #ff8478; --deny-bg: #43201d;
+      --plan: #e5b455; --plan-bg: #3b2f14;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #101513; --panel: #1a211e; --sb: #151c19; --zone: #1b2027;
+    --ink: #e5ebe8; --muted: #95a39e; --line: #35423d;
+    --allow: #62cc93; --allow-bg: #173826;
+    --deny: #ff8478; --deny-bg: #43201d;
+    --plan: #e5b455; --plan-bg: #3b2f14;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.65 var(--sans);
+    padding-inline: 20px; padding-block: 36px 72px;
+  }
+  .page { max-width: 1100px; margin-inline: auto; display: flex; flex-direction: column; gap: 40px; }
+  header { display: flex; flex-direction: column; gap: 10px; }
+  .eyebrow { font: 600 12px/1 var(--mono); letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+  h1 { margin: 0; font-size: 30px; line-height: 1.25; font-weight: 700; text-wrap: balance; }
+  h2 { margin: 0 0 14px; font-size: 19px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
+  p { margin: 0; max-width: 68ch; }
+  .lede { color: var(--muted); }
+  code { font: 13px var(--mono); background: var(--sb); padding: 1px 5px; border-radius: 4px; }
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  .scroll svg { display: block; width: 100%; min-width: 940px; height: auto; font-family: var(--sans); }
+  figcaption { color: var(--muted); font-size: 14px; max-width: 78ch; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; color: var(--muted); padding: 0; margin: 0; list-style: none; }
+  .legend li { display: flex; align-items: center; gap: 8px; }
+  .legend svg { width: 38px; height: 12px; flex: none; }
+
+  /* 그림 */
+  .sb      { fill: var(--sb); stroke: var(--ink); stroke-width: 1.6; }
+  .zone    { fill: var(--zone); stroke: var(--line); stroke-width: 1; }
+  .bx      { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
+  .proxy   { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
+  .plan    { stroke-dasharray: 6 4; }
+  .t       { fill: var(--ink); font-size: 13px; font-weight: 600; }
+  .tm      { fill: var(--ink); font: 600 13px var(--mono); }
+  .s       { fill: var(--muted); font-size: 11.5px; }
+  .a       { fill: none; stroke-width: 1.8; }
+  .a-allow { stroke: var(--allow); }
+  .a-deny  { stroke: var(--deny); }
+  .a-ink   { stroke: var(--ink); }
+  .h-allow { fill: var(--allow); }
+  .h-ink   { fill: var(--ink); }
+  .l       { font-size: 11.5px; font-weight: 600; }
+  .l-allow { fill: var(--allow); }
+  .l-deny  { fill: var(--deny); }
+  .l-ink   { fill: var(--ink); }
+
+  /* 샌드박스 카드 */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-head b { font: 600 16px var(--mono); }
+  .pill { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
+  .pill.on   { background: var(--allow-bg); color: var(--allow); }
+  .pill.plan { background: var(--plan-bg); color: var(--plan); }
+  .pill.off  { background: var(--deny-bg); color: var(--deny); }
+  dl { margin: 0; display: grid; grid-template-columns: 84px 1fr; gap: 9px 12px; font-size: 14px; line-height: 1.55; }
+  dt { color: var(--muted); }
+  dd { margin: 0; overflow-wrap: anywhere; }
+  .note { font-size: 13px; color: var(--plan); background: var(--plan-bg); border-radius: 6px; padding: 8px 12px; line-height: 1.55; }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14px; line-height: 1.5; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+  tr:last-child td { border-bottom: 0; }
+
+  ul.open { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; max-width: 78ch; }
+  footer { color: var(--muted); font-size: 13px; }
+</style>
+
+<div class="page">
+
+<header>
+  <span class="eyebrow">RequestForApproval · 2026-09-27</span>
+  <h1>RFA 샌드박스 배치</h1>
+  <p class="lede">기밀 구획이 다르면 샌드박스를 나눈다. 샌드박스끼리는 직접 말하지 않고, 호스트 서비스의 API로만 주고받는다. 어떤 경로를 열지는 샌드박스마다 붙는 네트워크 정책이 정한다.</p>
+</header>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 1080 760" role="img" aria-label="샌드박스 세 개가 각자의 프록시를 거쳐 호스트 서비스로만 나간다. rfa 샌드박스에서 review 로 가는 초안 제출과 knowledge 질문은 허용되고, 승인과 거절, 그 밖의 주소는 프록시에서 차단된다. 승인은 사람이 호스트 브라우저에서만 하고, 게시는 호스트의 review 서비스가 한다.">
+    <defs>
+      <marker id="h-allow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-allow"/></marker>
+      <marker id="h-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-ink"/></marker>
+    </defs>
+
+    <!-- 샌드박스: my-assistant -->
+    <rect class="sb" x="30" y="50" width="270" height="250" rx="10"/>
+    <text class="tm" x="46" y="79">my-assistant</text>
+    <text class="s" x="284" y="79" text-anchor="end">실행 중</text>
+    <rect class="bx" x="50" y="100" width="230" height="70" rx="6"/>
+    <text class="t" x="165" y="130" text-anchor="middle">main · 비서</text>
+    <text class="s" x="165" y="151" text-anchor="middle">사용자와 대화, 도구는 기본값</text>
+    <line class="a a-ink" x1="165" y1="170" x2="165" y2="224" marker-end="url(#h-ink)"/>
+    <rect class="proxy" x="50" y="225" width="230" height="40" rx="6"/>
+    <text class="t" x="165" y="250" text-anchor="middle">프록시 · 정책 검사</text>
+
+    <!-- 샌드박스: rfa -->
+    <rect class="sb plan" x="360" y="50" width="430" height="250" rx="10"/>
+    <text class="tm" x="376" y="79">rfa</text>
+    <text class="s" x="774" y="79" text-anchor="end">아직 안 만듦</text>
+    <rect class="bx" x="375" y="100" width="100" height="70" rx="6"/>
+    <text class="tm" x="425" y="130" text-anchor="middle">main</text>
+    <text class="s" x="425" y="151" text-anchor="middle">도구 전부 거부</text>
+    <rect class="bx" x="500" y="100" width="130" height="70" rx="6"/>
+    <text class="t" x="565" y="130" text-anchor="middle">워크플로</text>
+    <text class="s" x="565" y="151" text-anchor="middle">python, LangGraph</text>
+    <rect class="bx" x="675" y="100" width="100" height="70" rx="6"/>
+    <text class="tm" x="725" y="130" text-anchor="middle">public-desk</text>
+    <text class="s" x="725" y="151" text-anchor="middle">읽기 도구 3개</text>
+    <line class="a a-ink" x1="675" y1="135" x2="632" y2="135" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="653" y="127" text-anchor="middle">실행</text>
+    <line class="a a-ink" x1="565" y1="170" x2="565" y2="224" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="725" y1="170" x2="725" y2="224" marker-end="url(#h-ink)"/>
+    <rect class="proxy" x="375" y="225" width="400" height="40" rx="6"/>
+    <text class="t" x="575" y="250" text-anchor="middle">프록시 · 정책 검사</text>
+
+    <!-- 샌드박스: km -->
+    <rect class="sb plan" x="850" y="50" width="200" height="250" rx="10"/>
+    <text class="tm" x="866" y="79">km</text>
+    <text class="s" x="1034" y="79" text-anchor="end">미정 · 민섭</text>
+    <rect class="bx plan" x="865" y="100" width="170" height="70" rx="6"/>
+    <text class="t" x="950" y="130" text-anchor="middle">실무 에이전트들</text>
+    <text class="s" x="950" y="151" text-anchor="middle">내부 노트, 기밀</text>
+    <text class="s" x="950" y="215" text-anchor="middle">외부 채널 없음</text>
+    <text class="s" x="950" y="235" text-anchor="middle">knowledge API 뒤에</text>
+    <text class="s" x="950" y="253" text-anchor="middle">연결 예정</text>
+
+    <!-- 샌드박스 사이: 직접 통신 없음 -->
+    <line class="a a-deny" x1="304" y1="125" x2="356" y2="125" stroke-dasharray="4 4"/>
+    <line class="a a-deny" x1="324" y1="119" x2="336" y2="131"/><line class="a a-deny" x1="336" y1="119" x2="324" y2="131"/>
+    <text class="l l-deny" x="330" y="152" text-anchor="middle">직접</text>
+    <text class="l l-deny" x="330" y="167" text-anchor="middle">통신 없음</text>
+    <line class="a a-deny" x1="794" y1="125" x2="846" y2="125" stroke-dasharray="4 4"/>
+    <line class="a a-deny" x1="814" y1="119" x2="826" y2="131"/><line class="a a-deny" x1="826" y1="119" x2="814" y2="131"/>
+    <text class="l l-deny" x="820" y="152" text-anchor="middle">직접</text>
+    <text class="l l-deny" x="820" y="167" text-anchor="middle">통신 없음</text>
+
+    <!-- 호스트 -->
+    <rect class="zone" x="20" y="405" width="1040" height="180" rx="10"/>
+    <text class="s" x="36" y="428">호스트 · WSL 172.29.134.236</text>
+    <rect class="bx" x="40" y="445" width="250" height="120" rx="6"/>
+    <text class="t" x="165" y="480" text-anchor="middle">OpenShell 게이트웨이</text>
+    <text class="s" x="165" y="503" text-anchor="middle">:8080 · 127.0.0.1</text>
+    <text class="s" x="165" y="523" text-anchor="middle">API 키 보관, 정책 집행</text>
+    <rect class="bx" x="400" y="445" width="200" height="120" rx="6"/>
+    <text class="tm" x="500" y="480" text-anchor="middle">review :8790</text>
+    <text class="s" x="500" y="503" text-anchor="middle">결재 문서, 상태기계</text>
+    <text class="s" x="500" y="523" text-anchor="middle">스캐너, 서명, 결재 웹</text>
+    <rect class="bx" x="650" y="445" width="170" height="120" rx="6"/>
+    <text class="tm" x="735" y="480" text-anchor="middle">knowledge :8791</text>
+    <text class="s" x="735" y="503" text-anchor="middle">지금은 stub</text>
+    <text class="s" x="735" y="523" text-anchor="middle">민섭 구현으로 교체</text>
+    <rect class="bx plan" x="850" y="445" width="190" height="120" rx="6"/>
+    <text class="tm" x="945" y="480" text-anchor="middle">GitHub MCP :8792</text>
+    <text class="s" x="945" y="503" text-anchor="middle">아직 안 띄움</text>
+    <text class="s" x="945" y="523" text-anchor="middle">읽기 도구만 노출</text>
+
+    <!-- 샌드박스 → 호스트 -->
+    <line class="a a-allow" x1="165" y1="265" x2="165" y2="444" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="173" y="340">inference.local</text>
+
+    <polyline class="a a-allow" points="390,265 390,385 230,385 230,444" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="310" y="378" text-anchor="middle">inference.local</text>
+
+    <line class="a a-allow" x1="420" y1="265" x2="420" y2="444" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="428" y="340">초안·판정 제출</text>
+
+    <line class="a a-deny" x1="545" y1="265" x2="545" y2="312"/>
+    <line class="a a-deny" x1="539" y1="312" x2="551" y2="324"/><line class="a a-deny" x1="551" y1="312" x2="539" y2="324"/>
+    <text class="l l-deny" x="553" y="340">승인·거절</text>
+
+    <line class="a a-deny" x1="630" y1="265" x2="630" y2="312"/>
+    <line class="a a-deny" x1="624" y1="312" x2="636" y2="324"/><line class="a a-deny" x1="636" y1="312" x2="624" y2="324"/>
+    <text class="l l-deny" x="638" y="340">그 밖의 주소</text>
+
+    <line class="a a-allow" x1="725" y1="265" x2="725" y2="444" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="733" y="340">질문</text>
+
+    <polyline class="a a-allow" points="770,265 770,365 945,365 945,444" stroke-dasharray="6 4" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="858" y="358" text-anchor="middle">멘션 읽기</text>
+
+    <!-- 호스트 바깥 -->
+    <rect class="bx" x="40" y="680" width="250" height="52" rx="6"/>
+    <text class="t" x="165" y="711" text-anchor="middle">NVIDIA Endpoints · 모델 추론</text>
+    <line class="a a-ink" x1="165" y1="565" x2="165" y2="679" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="173" y="636">API 키를 붙여 전달</text>
+
+    <rect class="bx" x="400" y="680" width="140" height="52" rx="6"/>
+    <text class="t" x="470" y="711" text-anchor="middle">사람 · 브라우저</text>
+    <line class="a a-ink" x1="440" y1="680" x2="440" y2="566" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="448" y="648">승인·거절</text>
+    <text class="s" x="448" y="664">127.0.0.1 에서만</text>
+
+    <rect class="bx" x="760" y="680" width="280" height="52" rx="6"/>
+    <text class="t" x="900" y="711" text-anchor="middle">GitHub</text>
+    <polyline class="a a-ink" points="570,565 570,625 800,625 800,679" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="685" y="618" text-anchor="middle">게시 · 서명 토큰 확인 후</text>
+    <line class="a a-ink" x1="945" y1="565" x2="945" y2="679" stroke-dasharray="6 4" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="953" y="636">읽기</text>
+  </svg>
+  </div>
+  <ul class="legend">
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-allow" x1="1" y1="6" x2="36" y2="6"/></svg>정책이 허용</li>
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-deny" x1="1" y1="6" x2="24" y2="6"/><line class="a a-deny" x1="27" y1="1" x2="37" y2="11"/><line class="a a-deny" x1="37" y1="1" x2="27" y2="11"/></svg>프록시에서 차단</li>
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-ink" x1="1" y1="6" x2="36" y2="6"/></svg>정책 바깥의 흐름</li>
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-ink" x1="1" y1="6" x2="36" y2="6" stroke-dasharray="6 4"/></svg>점선은 아직 없는 것</li>
+  </ul>
+  <figcaption>에이전트가 보내는 요청은 모두 그 샌드박스의 프록시를 지난다. 차단은 요청이 샌드박스를 떠나기 전에 일어난다. 승인 버튼과 게시 토큰은 호스트에만 있어서, 샌드박스 안의 에이전트가 설득당해도 게시까지 갈 수 없다.</figcaption>
+</figure>
+
+<section>
+  <h2>샌드박스마다 붙는 설정</h2>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-head"><b>my-assistant</b><span class="pill on">실행 중</span></div>
+      <dl>
+        <dt>에이전트</dt><dd><code>main</code> 비서 하나</dd>
+        <dt>도구</dt><dd>기본값. 명단 파일 없음</dd>
+        <dt>나가는 곳</dt><dd>추론, 패키지 저장소 (pypi, npm, huggingface, brew)</dd>
+        <dt>설정 파일</dt><dd>없음. 온보딩 기본값</dd>
+      </dl>
+      <div class="note">지금은 검증하느라 <code>rfa-host-services</code> 정책이 여기 붙어 있다. <code>rfa</code>를 만들면 그쪽으로 옮기고 여기서는 뗀다.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><b>rfa</b><span class="pill plan">아직 안 만듦</span></div>
+      <dl>
+        <dt>에이전트</dt><dd><code>main</code> 잠금, <code>public-desk</code>, 워크플로(python 프로세스)</dd>
+        <dt>도구</dt><dd><code>public-desk</code>는 멘션 읽기, 스레드 읽기, 워크플로 실행만. 셸, 파일, 웹, 다른 에이전트 호출은 거부</dd>
+        <dt>나가는 곳</dt><dd>추론, review 읽기와 제출, knowledge 질문, GitHub MCP 읽기</dd>
+        <dt>막는 것</dt><dd>승인, 거절, 재게시, 기준 변경, 결재 웹, 그 밖의 모든 주소</dd>
+        <dt>설정 파일</dt><dd><code>agents/rfa.yaml</code><br><code>policies/rfa-host-services.yaml</code></dd>
+      </dl>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><b>km</b><span class="pill off">미정</span></div>
+      <dl>
+        <dt>에이전트</dt><dd>민섭 님의 실무 에이전트들</dd>
+        <dt>도구</dt><dd>미정</dd>
+        <dt>나가는 곳</dt><dd>외부 채널 없음. knowledge API를 어디서 띄울지에 따라 정함</dd>
+        <dt>설정 파일</dt><dd><code>agents/km.yaml</code>, <code>policies/km-*.yaml</code> 자리만 잡아 둠</dd>
+      </dl>
+      <div class="note">마감 전에는 그림에만 둔다. 데모는 <code>my-assistant</code>와 <code>rfa</code> 두 개로 한다.</div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>한 샌드박스 안과 샌드박스 사이의 차이</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>샌드박스를 나눔</th><th>한 샌드박스 안에서 에이전트를 나눔</th></tr></thead>
+    <tbody>
+      <tr><td>설정 파일</td><td><code>policies/*.yaml</code></td><td><code>agents/*.yaml</code></td></tr>
+      <tr><td>누가 집행</td><td>OpenShell 프록시와 커널</td><td>OpenClaw 런타임</td></tr>
+      <tr><td>파일시스템</td><td>따로</td><td>같이 씀</td></tr>
+      <tr><td>네트워크 정책</td><td>샌드박스마다 따로</td><td>같이 씀. 정책은 프로그램 단위라 에이전트를 구분하지 못함</td></tr>
+      <tr><td>쓰임</td><td>기밀 구획을 가를 때</td><td>같은 구획 안에서 역할만 가를 때</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>경로별 판정과 확인 상태</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>경로</th><th>판정</th><th>막거나 여는 곳</th><th>확인</th></tr></thead>
+    <tbody>
+      <tr><td>샌드박스 → <code>inference.local</code></td><td><span class="pill on">허용</span></td><td>기본 정책</td><td>200 확인</td></tr>
+      <tr><td>python → review <code>GET /reviews</code>, knowledge <code>GET /tasks</code></td><td><span class="pill on">허용</span></td><td><code>rfa-host-services</code></td><td>200 확인</td></tr>
+      <tr><td>python → review 초안, 판정 제출 (<code>POST</code>)</td><td><span class="pill on">허용</span></td><td><code>rfa-host-services</code></td><td>규칙은 적용됨. 실제 호출은 워크플로가 생긴 뒤</td></tr>
+      <tr><td>샌드박스 → <code>POST /reviews/*/approve</code>, <code>reject</code></td><td><span class="pill off">차단</span></td><td>프록시 <code>deny_rules</code></td><td>403 확인</td></tr>
+      <tr><td>샌드박스 → 결재 웹 <code>GET /</code></td><td><span class="pill off">차단</span></td><td>허용 목록에 없음</td><td>403 확인</td></tr>
+      <tr><td>샌드박스 → 그 밖의 주소, 허용 안 된 포트</td><td><span class="pill off">차단</span></td><td>기본 정책</td><td>차단 확인</td></tr>
+      <tr><td>python 아닌 프로그램 → review</td><td><span class="pill off">차단</span></td><td>정책의 프로그램 제한</td><td>curl 403 확인</td></tr>
+      <tr><td><code>public-desk</code> → GitHub MCP 읽기</td><td><span class="pill plan">예정</span></td><td><code>nemoclaw rfa mcp add</code></td><td>서버를 아직 안 띄움</td></tr>
+      <tr><td>사람 → 승인, 거절</td><td><span class="pill on">허용</span></td><td>review 서비스의 출처 검사</td><td>승희 님 테스트 통과. 이 PC 환경에서는 미확인</td></tr>
+      <tr><td>review → GitHub 게시</td><td><span class="pill on">허용</span></td><td>서명 토큰과 본문 해시 대조</td><td>승희 님 테스트 통과</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>아직 확인하지 못한 것</h2>
+  <ul class="open">
+    <li><b>도구 이름.</b> <code>github__list_mentions</code> 같은 이름은 MCP 서버가 <code>github</code>, <code>workflow</code>로 등록된다는 전제다. 등록한 뒤 실제 이름과 맞춘다.</li>
+    <li><b>도구 거부의 실제 동작.</b> <code>agents/rfa.yaml</code>은 검증기를 통과했지만 샌드박스에 구워 보지 않았다.</li>
+    <li><b>승인 출처 검사.</b> Docker Desktop이 요청을 대신 전달하면 샌드박스 요청이 호스트에서 <code>127.0.0.1</code>로 보일 수 있다. 그렇다면 승인 차단은 프록시 규칙 하나에 기대게 된다. uvicorn 로그의 출처 주소로 확인한다.</li>
+    <li><b>메모리.</b> 샌드박스마다 컨테이너가 하나씩 뜬다. 16GB에서 두 개는 무리 없어 보이지만 재 보지 않았다.</li>
+    <li><b>호스트 주소.</b> <code>172.29.134.236</code>은 WSL을 재시작하면 바뀔 수 있다. 바뀌면 <code>scripts/apply_policies.sh</code>를 다시 실행한다.</li>
+  </ul>
+</section>
+
+<footer>근거: <code>docs/nemoclaw/03-policy-verification.md</code>, <code>policies/README.md</code>, RFA_module <code>docs/architecture.md</code></footer>
+
+</div>

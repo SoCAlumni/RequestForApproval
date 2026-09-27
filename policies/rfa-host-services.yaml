@@ -1,0 +1,55 @@
+# 샌드박스 rfa → 호스트 서비스(review, knowledge) 허용 범위.
+# 근거: RFA_module docs/architecture.md 4장 "Tool call 정책표".
+#
+# __RFA_HOST_IP__ 는 scripts/apply_policies.sh 가 실제 호스트 IP로 바꾼다.
+# Docker 드라이버 샌드박스는 hosts-add 를 지원하지 않으므로 호스트명 대신 IP 리터럴을 쓴다.
+# allowed_ips 는 적지 않는다. --trusted-private-host 로 넘기면 NemoClaw 가 검증 후 고정한다.
+#
+# github MCP(8792)는 여기 없다. `nemoclaw rfa mcp add` 가 자체 정책을 만든다.
+# inference.local 은 기본 정책에 이미 있다.
+
+preset:
+  name: rfa-host-services
+  description: "RFA review/knowledge host services for the LangGraph workflow"
+
+network_policies:
+  rfa_review:
+    name: rfa_review
+    endpoints:
+      - host: __RFA_HOST_IP__
+        port: 8790
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: POST, path: "/reviews" }
+          - allow: { method: GET, path: "/reviews" }
+          - allow: { method: GET, path: "/reviews/*" }
+          - allow: { method: POST, path: "/reviews/*/knowledge" }
+          - allow: { method: POST, path: "/reviews/*/draft" }
+          - allow: { method: POST, path: "/reviews/*/verdict" }
+          - allow: { method: POST, path: "/reviews/*/needs-human" }
+          - allow: { method: GET, path: "/policy/*" }
+        # 사람 결재와 기준 변경은 에이전트가 호출할 수 없다.
+        # allow 에 없으므로 이미 거부되지만, 나중에 allow 가 넓어져도 막히도록 명시한다.
+        deny_rules:
+          - { method: "*", path: "/reviews/*/approve" }
+          - { method: "*", path: "/reviews/*/reject" }
+          - { method: "*", path: "/reviews/*/republish" }
+          - { method: POST, path: "/policy/**" }
+    binaries:
+      - { path: /usr/bin/python3* }
+      - { path: /sandbox/**/bin/python3* }
+
+  rfa_knowledge:
+    name: rfa_knowledge
+    endpoints:
+      - host: __RFA_HOST_IP__
+        port: 8791
+        protocol: rest
+        enforcement: enforce
+        rules:
+          - allow: { method: GET, path: "/tasks" }
+          - allow: { method: POST, path: "/tasks/*/ask" }
+    binaries:
+      - { path: /usr/bin/python3* }
+      - { path: /sandbox/**/bin/python3* }
