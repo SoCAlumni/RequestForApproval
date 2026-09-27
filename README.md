@@ -32,6 +32,7 @@
 | 문서 | 내용 |
 |---|---|
 | [docs/architecture-decisions.md](docs/architecture-decisions.md) | 아키텍처 결정과 이유 |
+| [docs/review-methodology.md](docs/review-methodology.md) | 기밀 검토 방법론. 경로, 내용, 결재와 허용·차단 목록 ([그림](docs/review-pipeline.html)) |
 | [docs/nemoclaw/](docs/nemoclaw/README.md) | NemoClaw 설치, 정책 검증, 샌드박스 설정 |
 | [docs/ports.md](docs/ports.md) | 포트 정리 |
 | [policies/README.md](policies/README.md) | 네트워크 정책 설명 |
