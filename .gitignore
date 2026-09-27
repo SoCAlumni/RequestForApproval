@@ -1,0 +1,18 @@
+# secrets
+.env
+.env.*
+!.env.example
+.envrc
+*.pem
+*.key
+
+# python / node
+__pycache__/
+.venv/
+node_modules/
+
+# rendered policy (호스트 IP가 들어간 생성물)
+policies/.rendered/
+
+# 편집 원본은 docs/proposal.md. PDF 는 본문을 고칠 수 없어 레포에 넣지 않는다
+docs/proposal.pdf
