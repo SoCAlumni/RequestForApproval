@@ -103,142 +103,142 @@
 <div class="page">
 
 <header>
-  <span class="eyebrow">RequestForApproval · 2026-09-27 · 목표 구조</span>
+  <span class="eyebrow">RequestForApproval · 2026-09-27 · 해커톤 시연 구성</span>
   <h1>RFA 샌드박스 배치</h1>
-  <p class="lede">샌드박스는 기밀 등급마다 하나씩 두고 이름도 등급을 따른다. 기밀을 다루는 샌드박스와 외부와 닿는 샌드박스는 gateway부터 다르다. 데이터는 등급 경계를 넘기 전에 검토를 받는다.</p>
-  <p class="lede">이 그림은 앞으로 만들 구조다. 점선으로 그린 것은 아직 없다.</p>
+  <p class="lede">샌드박스는 기밀 등급마다 하나씩 두고 이름도 등급을 따른다. 샌드박스끼리는 직접 말하지 않고 호스트 서비스의 API로만 주고받는다. 승인과 게시는 호스트에만 있다.</p>
+  <p class="lede">해커톤 시연에서는 모든 샌드박스가 외부 API로 추론한다. 그래서 시연에는 합성 자료만 넣는다. 점선으로 그린 것은 아직 없다.</p>
 </header>
 
 <figure>
   <div class="scroll">
-  <svg viewBox="0 0 1100 810" role="img" aria-label="공개용 gateway 아래의 public 샌드박스는 외부 제공자로 추론하고, 기밀용 gateway 아래의 team 샌드박스는 이 PC 안의 Ollama 로만 추론한다. team 에서 기밀 검토를 통과한 답변만 호스트의 knowledge 를 거쳐 public 으로 넘어간다. public 에서 승인과 거절, 그 밖의 주소는 프록시에서 차단되고, 승인은 사람이, 게시는 호스트의 review 가 한다.">
+  <svg viewBox="0 0 1100 780" role="img" aria-label="public 과 team 두 샌드박스가 같은 gateway 를 거쳐 외부 제공자로 추론한다. 두 샌드박스는 서로 직접 통신하지 않고 호스트 서비스로만 나간다. public 에서 승인과 거절, 그 밖의 주소는 프록시에서 차단되고, 승인은 사람이, 게시는 호스트의 review 가 한다.">
     <defs>
       <marker id="h-allow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-allow"/></marker>
       <marker id="h-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-ink"/></marker>
     </defs>
 
-    <!-- gateway 구역 -->
-    <rect class="gw" x="20" y="30" width="500" height="300" rx="10"/>
-    <text class="t" x="40" y="55">공개용 gateway :8080</text>
-    <text class="s" x="500" y="55" text-anchor="end">추론: NVIDIA Endpoints</text>
-
-    <rect class="gw plan" x="560" y="30" width="520" height="300" rx="10"/>
-    <text class="t" x="580" y="55">기밀용 gateway :8090</text>
-    <text class="s" x="1060" y="55" text-anchor="end">추론: Ollama만 · 외부 키 없음</text>
+    <!-- gateway 와 외부 제공자 -->
+    <rect class="bx" x="40" y="25" width="830" height="44" rx="6"/>
+    <text class="t" x="455" y="52" text-anchor="middle">OpenShell gateway :8080 · 추론 경로 하나 · API 키 보관</text>
+    <rect class="bx" x="930" y="25" width="150" height="44" rx="6"/>
+    <text class="t" x="1005" y="44" text-anchor="middle">NVIDIA Endpoints</text>
+    <text class="s" x="1005" y="60" text-anchor="middle">외부</text>
+    <line class="a a-ink" x1="870" y1="47" x2="929" y2="47" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="900" y="90" text-anchor="middle">키를 붙여 외부로</text>
 
     <!-- 샌드박스: public -->
-    <rect class="sb plan" x="40" y="70" width="460" height="240" rx="10"/>
-    <text class="tm" x="56" y="97">public</text>
-    <text class="s" x="484" y="97" text-anchor="end">공개 등급</text>
-    <rect class="bx" x="55" y="112" width="95" height="66" rx="6"/>
-    <text class="tm" x="102" y="140" text-anchor="middle">main</text>
-    <text class="s" x="102" y="160" text-anchor="middle">도구 전부 거부</text>
-    <rect class="bx" x="175" y="112" width="145" height="66" rx="6"/>
-    <text class="t" x="247" y="140" text-anchor="middle">워크플로</text>
-    <text class="s" x="247" y="160" text-anchor="middle">작성, 편집 · python</text>
-    <rect class="bx" x="365" y="112" width="120" height="66" rx="6"/>
-    <text class="tm" x="425" y="140" text-anchor="middle">public-desk</text>
-    <text class="s" x="425" y="160" text-anchor="middle">읽기 도구 3개</text>
-    <line class="a a-ink" x1="365" y1="145" x2="322" y2="145" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="343" y="137" text-anchor="middle">실행</text>
-    <line class="a a-ink" x1="247" y1="178" x2="247" y2="234" marker-end="url(#h-ink)"/>
-    <line class="a a-ink" x1="425" y1="178" x2="425" y2="234" marker-end="url(#h-ink)"/>
-    <rect class="proxy" x="55" y="235" width="430" height="40" rx="6"/>
-    <text class="t" x="270" y="260" text-anchor="middle">프록시 · 정책 검사</text>
+    <rect class="sb plan" x="40" y="110" width="460" height="240" rx="10"/>
+    <text class="tm" x="56" y="137">public</text>
+    <text class="s" x="484" y="137" text-anchor="end">공개 등급</text>
+    <line class="a a-allow" x1="120" y1="110" x2="120" y2="70" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="128" y="95">추론</text>
+    <rect class="bx" x="55" y="152" width="95" height="66" rx="6"/>
+    <text class="tm" x="102" y="180" text-anchor="middle">main</text>
+    <text class="s" x="102" y="200" text-anchor="middle">도구 전부 거부</text>
+    <rect class="bx" x="175" y="152" width="145" height="66" rx="6"/>
+    <text class="t" x="247" y="180" text-anchor="middle">워크플로</text>
+    <text class="s" x="247" y="200" text-anchor="middle">작성, 편집 · python</text>
+    <rect class="bx" x="365" y="152" width="120" height="66" rx="6"/>
+    <text class="tm" x="425" y="180" text-anchor="middle">public-desk</text>
+    <text class="s" x="425" y="200" text-anchor="middle">읽기 도구 3개</text>
+    <line class="a a-ink" x1="365" y1="185" x2="322" y2="185" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="343" y="177" text-anchor="middle">실행</text>
+    <line class="a a-ink" x1="247" y1="218" x2="247" y2="274" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="425" y1="218" x2="425" y2="274" marker-end="url(#h-ink)"/>
+    <rect class="proxy" x="55" y="275" width="430" height="40" rx="6"/>
+    <text class="t" x="270" y="300" text-anchor="middle">프록시 · 정책 검사</text>
+
+    <!-- 샌드박스 사이 -->
+    <line class="a a-deny" x1="504" y1="185" x2="576" y2="185" stroke-dasharray="4 4"/>
+    <line class="a a-deny" x1="534" y1="179" x2="546" y2="191"/><line class="a a-deny" x1="546" y1="179" x2="534" y2="191"/>
+    <text class="l l-deny" x="540" y="212" text-anchor="middle">직접</text>
+    <text class="l l-deny" x="540" y="227" text-anchor="middle">통신 없음</text>
 
     <!-- 샌드박스: team -->
-    <rect class="sb plan" x="580" y="70" width="335" height="240" rx="10"/>
-    <text class="tm" x="596" y="97">team</text>
-    <text class="s" x="899" y="97" text-anchor="end">업무 내부 등급</text>
-    <rect class="bx" x="595" y="112" width="80" height="66" rx="6"/>
-    <text class="t" x="635" y="140" text-anchor="middle">비서</text>
-    <text class="s" x="635" y="160" text-anchor="middle">main</text>
-    <rect class="bx" x="690" y="112" width="90" height="66" rx="6"/>
-    <text class="t" x="735" y="140" text-anchor="middle">업무 에이전트</text>
-    <text class="s" x="735" y="160" text-anchor="middle">task-orbit</text>
-    <rect class="bx" x="820" y="112" width="80" height="66" rx="6"/>
-    <text class="t" x="860" y="140" text-anchor="middle">기밀 검토</text>
-    <text class="s" x="860" y="160" text-anchor="middle">censor-public</text>
-    <line class="a a-ink" x1="780" y1="145" x2="818" y2="145" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="800" y="137" text-anchor="middle">원문</text>
-    <line class="a a-ink" x1="860" y1="178" x2="860" y2="234" marker-end="url(#h-ink)"/>
-    <rect class="proxy" x="595" y="235" width="305" height="40" rx="6"/>
-    <text class="t" x="747" y="260" text-anchor="middle">프록시 · 정책 검사</text>
+    <rect class="sb plan" x="580" y="110" width="335" height="240" rx="10"/>
+    <text class="tm" x="596" y="137">team</text>
+    <text class="s" x="899" y="137" text-anchor="end">업무 내부 등급</text>
+    <line class="a a-allow" x1="660" y1="110" x2="660" y2="70" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="668" y="95">추론 · 시연에서는 외부 API</text>
+    <rect class="bx" x="595" y="152" width="80" height="66" rx="6"/>
+    <text class="t" x="635" y="180" text-anchor="middle">비서</text>
+    <text class="s" x="635" y="200" text-anchor="middle">main</text>
+    <rect class="bx" x="690" y="152" width="90" height="66" rx="6"/>
+    <text class="t" x="735" y="180" text-anchor="middle">업무 에이전트</text>
+    <text class="s" x="735" y="200" text-anchor="middle">task-orbit</text>
+    <rect class="bx" x="820" y="152" width="80" height="66" rx="6"/>
+    <text class="t" x="860" y="180" text-anchor="middle">기밀 검토</text>
+    <text class="s" x="860" y="200" text-anchor="middle">censor-public</text>
+    <line class="a a-ink" x1="780" y1="185" x2="818" y2="185" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="800" y="177" text-anchor="middle">원문</text>
+    <line class="a a-ink" x1="860" y1="218" x2="860" y2="274" marker-end="url(#h-ink)"/>
+    <rect class="proxy" x="595" y="275" width="305" height="40" rx="6"/>
+    <text class="t" x="747" y="300" text-anchor="middle">프록시 · 정책 검사</text>
 
     <!-- 구조만: company, division -->
-    <rect class="sb plan" x="935" y="70" width="130" height="110" rx="10"/>
-    <text class="tm" x="1000" y="112" text-anchor="middle">company</text>
-    <text class="s" x="1000" y="134" text-anchor="middle">회사 내 등급</text>
-    <text class="s" x="1000" y="153" text-anchor="middle">구조만</text>
-    <rect class="sb plan" x="935" y="200" width="130" height="110" rx="10"/>
-    <text class="tm" x="1000" y="242" text-anchor="middle">division</text>
-    <text class="s" x="1000" y="264" text-anchor="middle">사업부 내 등급</text>
-    <text class="s" x="1000" y="283" text-anchor="middle">구조만</text>
+    <rect class="sb plan" x="935" y="110" width="130" height="110" rx="10"/>
+    <text class="tm" x="1000" y="152" text-anchor="middle">company</text>
+    <text class="s" x="1000" y="174" text-anchor="middle">회사 내 등급</text>
+    <text class="s" x="1000" y="193" text-anchor="middle">구조만</text>
+    <rect class="sb plan" x="935" y="240" width="130" height="110" rx="10"/>
+    <text class="tm" x="1000" y="282" text-anchor="middle">division</text>
+    <text class="s" x="1000" y="304" text-anchor="middle">사업부 내 등급</text>
+    <text class="s" x="1000" y="323" text-anchor="middle">구조만</text>
 
     <!-- 호스트 -->
-    <rect class="zone" x="20" y="420" width="1060" height="180" rx="10"/>
-    <text class="s" x="40" y="443">호스트 · WSL</text>
-    <rect class="bx" x="40" y="455" width="200" height="120" rx="6"/>
-    <text class="tm" x="140" y="490" text-anchor="middle">review :8790</text>
-    <text class="s" x="140" y="513" text-anchor="middle">결재 문서, 스캐너</text>
-    <text class="s" x="140" y="533" text-anchor="middle">서명, 결재 웹</text>
-    <rect class="bx plan" x="280" y="455" width="180" height="120" rx="6"/>
-    <text class="tm" x="370" y="490" text-anchor="middle">GitHub MCP :8792</text>
-    <text class="s" x="370" y="513" text-anchor="middle">읽기 도구만 노출</text>
-    <text class="s" x="370" y="533" text-anchor="middle">아직 안 띄움</text>
-    <rect class="bx" x="500" y="455" width="200" height="120" rx="6"/>
-    <text class="tm" x="600" y="490" text-anchor="middle">knowledge :8791</text>
-    <text class="s" x="600" y="513" text-anchor="middle">독자 범위에 맞게</text>
-    <text class="s" x="600" y="533" text-anchor="middle">걸러낸 답변만 돌려줌</text>
-    <rect class="bx" x="760" y="455" width="300" height="120" rx="6"/>
-    <text class="tm" x="910" y="490" text-anchor="middle">Ollama :11434</text>
-    <text class="s" x="910" y="513" text-anchor="middle">qwen3.5:9b · context 8192</text>
-    <text class="s" x="910" y="533" text-anchor="middle">GPU 를 직접 씀</text>
+    <rect class="zone" x="20" y="460" width="1060" height="180" rx="10"/>
+    <text class="s" x="40" y="483">호스트 · WSL</text>
+    <rect class="bx" x="40" y="495" width="200" height="120" rx="6"/>
+    <text class="tm" x="140" y="530" text-anchor="middle">review :8790</text>
+    <text class="s" x="140" y="553" text-anchor="middle">결재 문서, 스캐너</text>
+    <text class="s" x="140" y="573" text-anchor="middle">서명, 결재 웹</text>
+    <rect class="bx plan" x="280" y="495" width="180" height="120" rx="6"/>
+    <text class="tm" x="370" y="530" text-anchor="middle">GitHub MCP :8792</text>
+    <text class="s" x="370" y="553" text-anchor="middle">읽기 도구만 노출</text>
+    <text class="s" x="370" y="573" text-anchor="middle">아직 안 띄움</text>
+    <rect class="bx" x="500" y="495" width="200" height="120" rx="6"/>
+    <text class="tm" x="600" y="530" text-anchor="middle">knowledge :8791</text>
+    <text class="s" x="600" y="553" text-anchor="middle">지금은 합성 자료 stub</text>
+    <text class="s" x="600" y="573" text-anchor="middle">목표: 걸러낸 답변만</text>
+    <rect class="bx plan" x="760" y="495" width="300" height="120" rx="6"/>
+    <text class="tm" x="910" y="530" text-anchor="middle">Ollama :11434</text>
+    <text class="s" x="910" y="553" text-anchor="middle">시연에서는 쓰지 않음</text>
+    <text class="s" x="910" y="573" text-anchor="middle">목표 구조에서 기밀 등급의 추론</text>
 
     <!-- public → 호스트 -->
-    <line class="a a-allow" x1="90" y1="275" x2="90" y2="454" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="98" y="372">초안 제출</text>
+    <line class="a a-allow" x1="90" y1="315" x2="90" y2="494" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="98" y="412">초안 제출</text>
 
-    <line class="a a-deny" x1="190" y1="275" x2="190" y2="322"/>
-    <line class="a a-deny" x1="184" y1="322" x2="196" y2="334"/><line class="a a-deny" x1="196" y1="322" x2="184" y2="334"/>
-    <text class="l l-deny" x="198" y="352">승인·거절</text>
+    <line class="a a-deny" x1="190" y1="315" x2="190" y2="362"/>
+    <line class="a a-deny" x1="184" y1="362" x2="196" y2="374"/><line class="a a-deny" x1="196" y1="362" x2="184" y2="374"/>
+    <text class="l l-deny" x="198" y="392">승인·거절</text>
 
-    <line class="a a-deny" x1="285" y1="275" x2="285" y2="322"/>
-    <line class="a a-deny" x1="279" y1="322" x2="291" y2="334"/><line class="a a-deny" x1="291" y1="322" x2="279" y2="334"/>
-    <text class="l l-deny" x="293" y="352">그 밖의 주소</text>
+    <line class="a a-deny" x1="285" y1="315" x2="285" y2="362"/>
+    <line class="a a-deny" x1="279" y1="362" x2="291" y2="374"/><line class="a a-deny" x1="291" y1="362" x2="279" y2="374"/>
+    <text class="l l-deny" x="293" y="392">그 밖의 주소</text>
 
-    <line class="a a-allow" x1="380" y1="275" x2="380" y2="454" stroke-dasharray="6 4" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="388" y="372">멘션 읽기</text>
+    <line class="a a-allow" x1="380" y1="315" x2="380" y2="494" stroke-dasharray="6 4" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="388" y="412">멘션 읽기</text>
 
-    <polyline class="a a-allow" points="470,275 470,398 560,398 560,454" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="478" y="390">질문</text>
-
-    <!-- public 추론: 외부 -->
-    <polyline class="a a-allow" points="55,255 30,255 30,765 59,765" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="40" y="730">추론 · 외부로 나감</text>
+    <polyline class="a a-allow" points="470,315 470,438 560,438 560,494" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="478" y="430">질문</text>
 
     <!-- team → 호스트 -->
-    <line class="a a-allow" x1="640" y1="275" x2="640" y2="454" stroke-dasharray="6 4" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="648" y="372">걸러낸 답변 · 방식 미정</text>
-
-    <line class="a a-allow" x1="850" y1="275" x2="850" y2="454" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="858" y="372">추론 · 이 PC 안</text>
+    <line class="a a-allow" x1="640" y1="315" x2="640" y2="494" stroke-dasharray="6 4" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="648" y="412">걸러낸 답변 · 목표 구조, 방식 미정</text>
 
     <!-- 호스트 바깥 -->
-    <rect class="bx" x="60" y="660" width="140" height="52" rx="6"/>
-    <text class="t" x="130" y="691" text-anchor="middle">사람 · 브라우저</text>
-    <line class="a a-ink" x1="110" y1="660" x2="110" y2="576" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="118" y="636">승인·거절</text>
+    <rect class="bx" x="60" y="700" width="140" height="52" rx="6"/>
+    <text class="t" x="130" y="731" text-anchor="middle">사람 · 브라우저</text>
+    <line class="a a-ink" x1="110" y1="700" x2="110" y2="616" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="118" y="676">승인·거절</text>
 
-    <rect class="bx" x="330" y="660" width="430" height="52" rx="6"/>
-    <text class="t" x="545" y="691" text-anchor="middle">GitHub</text>
-    <polyline class="a a-ink" points="220,575 220,625 350,625 350,659" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="228" y="617">게시 · 서명 확인 후</text>
-    <line class="a a-ink" x1="420" y1="575" x2="420" y2="659" stroke-dasharray="6 4" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="428" y="640">읽기</text>
-
-    <rect class="bx" x="60" y="740" width="220" height="52" rx="6"/>
-    <text class="t" x="170" y="771" text-anchor="middle">NVIDIA Endpoints · 외부</text>
+    <rect class="bx" x="330" y="700" width="430" height="52" rx="6"/>
+    <text class="t" x="545" y="731" text-anchor="middle">GitHub</text>
+    <polyline class="a a-ink" points="220,615 220,665 350,665 350,699" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="228" y="657">게시 · 서명 확인 후</text>
+    <line class="a a-ink" x1="420" y1="615" x2="420" y2="699" stroke-dasharray="6 4" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="428" y="680">읽기</text>
   </svg>
   </div>
   <ul class="legend">
@@ -247,21 +247,25 @@
     <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-ink" x1="1" y1="6" x2="36" y2="6"/></svg>정책 바깥의 흐름</li>
     <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-ink" x1="1" y1="6" x2="36" y2="6" stroke-dasharray="6 4"/></svg>점선은 아직 없는 것</li>
   </ul>
-  <figcaption>기밀은 <code>team</code> 안에서 걸러진 뒤에만 밖으로 나온다. <code>public</code>에는 걸러진 답변만 들어오므로, 외부에서 온 입력이 에이전트를 속여도 빼낼 기밀이 없고 외부 제공자로 가는 추론에도 기밀이 실리지 않는다. 승인 버튼과 게시 토큰은 호스트에만 있다.</figcaption>
+  <figcaption>두 샌드박스는 파일, 기억, 네트워크 정책이 따로이고 서로 직접 통신하지 않는다. 추론만 같은 gateway를 거쳐 같은 외부 제공자로 나간다. 승인 버튼과 게시 토큰은 호스트에만 있어서, 에이전트가 속아도 게시까지 갈 수 없다.</figcaption>
 </figure>
 
 <section>
-  <h2>왜 gateway를 나누는가</h2>
-  <p>OpenShell은 gateway 하나에 추론 경로를 하나만 둔다. 같은 gateway의 샌드박스들은 그 경로를 같이 쓴다. 한 샌드박스를 외부 제공자로 바꾸면 같은 gateway에 있는 기밀 샌드박스의 프롬프트도 그 순간부터 외부로 나간다.</p>
+  <h2>시연 구성과 목표 구조</h2>
+  <p>OpenShell은 gateway 하나에 추론 경로를 하나만 둔다. 같은 gateway의 샌드박스들은 그 경로를 같이 쓴다. 등급마다 다른 제공자를 쓰려면 gateway를 나눠야 하는데, 시연에서는 나누지 않고 모두 외부 API를 쓴다.</p>
   <div class="tablewrap" style="margin-top:14px">
   <table>
-    <thead><tr><th>gateway</th><th>포트</th><th>등록하는 제공자</th><th>샌드박스</th><th>상태</th></tr></thead>
+    <thead><tr><th></th><th>해커톤 시연</th><th>목표 구조</th></tr></thead>
     <tbody>
-      <tr><td>공개용</td><td><code>8080</code></td><td>NVIDIA Endpoints</td><td><code>public</code></td><td><span class="pill on">gateway는 실행 중</span></td></tr>
-      <tr><td>기밀용</td><td><code>8090</code></td><td>Ollama만. 외부 제공자의 키를 등록하지 않음</td><td><code>team</code>, 나중에 <code>company</code>, <code>division</code></td><td><span class="pill plan">아직 안 만듦</span></td></tr>
+      <tr><td><code>public</code>의 추론</td><td>NVIDIA Endpoints</td><td>NVIDIA Endpoints</td></tr>
+      <tr><td><code>team</code>의 추론</td><td>NVIDIA Endpoints</td><td>이 PC의 Ollama</td></tr>
+      <tr><td>gateway</td><td><code>8080</code> 하나</td><td>공개용 <code>8080</code>, 기밀용 <code>8090</code></td></tr>
+      <tr><td>기밀 검토가 도는 곳</td><td>지금 구현대로 <code>public</code> 안. 옮기는 것은 시간이 되면</td><td><code>team</code> 안. 걸러낸 답변만 밖으로</td></tr>
+      <tr><td>넣을 수 있는 자료</td><td><span class="pill off">합성 자료만</span></td><td>실제 업무 자료</td></tr>
     </tbody>
   </table>
   </div>
+  <p style="margin-top:12px" class="lede">시연에서 <code>team</code>의 프롬프트는 외부 제공자로 나간다. 실제 업무 자료를 넣으면 그대로 나가므로, 시연 지식은 RFA_module의 합성 자료만 쓴다.</p>
 </section>
 
 <section>
@@ -287,8 +291,9 @@
         <dt>등급</dt><dd>업무 내부. 독자는 업무 담당자</dd>
         <dt>에이전트</dt><dd>비서(<code>main</code>), 업무 에이전트(<code>task-orbit</code>), 기밀 검토(<code>censor-public</code>)</dd>
         <dt>도구</dt><dd>파일 읽기만. MCP 도구는 정해지면 하나씩 추가</dd>
-        <dt>추론</dt><dd>Ollama <code>qwen3.5:9b</code>. 이 PC 밖으로 나가지 않음</dd>
+        <dt>추론</dt><dd>시연은 NVIDIA Endpoints. 목표 구조는 이 PC의 Ollama</dd>
         <dt>나가는 곳</dt><dd>걸러낸 답변을 넘길 호스트 서비스. 방식 미정</dd>
+        <dt>자료</dt><dd>합성 자료만</dd>
         <dt>설정 파일</dt><dd><code>agents/team.yaml</code> 초안. 정책 파일은 아직 없음</dd>
       </dl>
     </div>
@@ -298,7 +303,7 @@
       <dl>
         <dt>등급</dt><dd>회사 내, 사업부 내</dd>
         <dt>에이전트</dt><dd>사내 질문 대응, 사내 채널 게시</dd>
-        <dt>추론</dt><dd>Ollama. 기밀용 gateway를 같이 씀</dd>
+        <dt>추론</dt><dd>목표 구조에서 Ollama</dd>
         <dt>설정 파일</dt><dd>없음</dd>
       </dl>
       <div class="note">첫 구현에서는 만들지 않는다. 실제로 연동하는 채널이 공개 GitHub 하나이기 때문이다.</div>
@@ -331,7 +336,7 @@
       <tr><td>누가 집행</td><td>OpenShell 프록시와 커널</td><td>OpenClaw 런타임</td></tr>
       <tr><td>파일시스템, 기억</td><td>따로</td><td>같이 씀</td></tr>
       <tr><td>네트워크 정책</td><td>샌드박스마다 따로</td><td>같이 씀. 정책은 프로그램 단위라 에이전트를 구분하지 못함</td></tr>
-      <tr><td>추론 경로</td><td>gateway가 다르면 따로</td><td>같이 씀</td></tr>
+      <tr><td>추론 경로</td><td>gateway가 같으면 같이 씀. 시연에서는 같이 씀</td><td>같이 씀</td></tr>
       <tr><td>쓰임</td><td>기밀 등급을 가를 때</td><td>같은 등급 안에서 역할만 가를 때</td></tr>
     </tbody>
   </table>
@@ -362,11 +367,11 @@
 <section>
   <h2>아직 확인하지 못한 것</h2>
   <ul class="open">
-    <li><b>gateway 두 개.</b> 이 PC에서 같이 띄워 보지 않았다. 안 되면 모든 샌드박스를 한 제공자로 통일한다.</li>
+    <li><b>샌드박스 두 개를 한 gateway에.</b> <code>public</code>과 <code>team</code>을 같이 띄웠을 때의 메모리와, 서로의 파일과 경로에 닿지 못하는지.</li>
     <li><b>기밀 검토의 위치.</b> 지금 구현은 기밀 검토가 외부 대응 쪽에서 돈다. <code>team</code>으로 옮기려면 RFA_module과 knowledge API가 함께 바뀌어야 한다. 팀 확인 전이다.</li>
     <li><b>걸러낸 답변을 넘기는 방식.</b> 샌드박스는 밖으로 요청을 보낼 수만 있다. <code>team</code>이 호스트에 밀어 넣을지, 호스트가 <code>team</code>의 에이전트를 부를지 정하지 않았다.</li>
     <li><b>모델 호출 방식.</b> 샌드박스의 <code>inference.local</code>은 OpenAI 방식만 받는다. 워크플로는 Anthropic 방식을 쓴다.</li>
-    <li><b>로컬 모델의 품질.</b> 9B 모델이 도구를 정확히 호출하는지, 기밀 검토 판단이 되는지.</li>
+    <li><b>외부 API의 한도.</b> 무료 한도(분당 약 40회)를 두 샌드박스가 같이 쓴다. 워크플로 한 번에 모델을 여러 번 부른다.</li>
     <li><b>도구 이름과 도구 거부의 실제 동작.</b> 명단은 검증기를 통과했지만 샌드박스에 구워 확인하지 않았다.</li>
   </ul>
 </section>
