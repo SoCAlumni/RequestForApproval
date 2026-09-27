@@ -311,7 +311,7 @@ team (업무 내부)                            public (공개)
 | gateway 두 개 동작 | 다영 | 이 PC에서 실제로 띄워 보기 |
 | D10에 필요한 변경 | 승희 님, 민섭 님 | 기밀 검토 노드의 위치와 knowledge API의 독자 범위 인자 |
 | 등급 4단계 구분 | 팀 | 회사 내와 사업부 내가 포함 관계인지, 제품팀 Q&A가 어느 등급인지. 첫 구현에는 영향 없음 |
-| 남은 문서의 이름 | 다영 | `docs/milestone.md`, `docs/nemoclaw/04-sandbox-setup-summary.md`, `docs/sandbox-layout.html`은 옛 이름과 옛 배치를 쓴다 |
+| 남은 문서의 이름 | 다영 | `docs/nemoclaw/04-sandbox-setup-summary.md`는 옛 이름(`rfa`)으로 쓰여 있다. 맨 위에 안내를 넣었다. `docs/milestone.md`와 `docs/sandbox-layout.html`은 새 이름으로 고쳤다 |
 | 업무 구획 | 팀 | 업무 3개가 서로의 기억을 봐도 되는지 |
 | knowledge API의 응답 범위 | 팀 | 원문을 주면 받는 쪽 샌드박스에 기밀이 들어온다 |
 | 승인 확인 방식 | 팀 | 출처 주소 검사를 토큰으로 바꿀지 |

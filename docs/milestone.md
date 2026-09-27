@@ -203,6 +203,6 @@ POST https://inference.local/v1/chat/completions → 200
 - [architecture-decisions.md](architecture-decisions.md) 아키텍처 결정과 이유
 - [nemoclaw/04-sandbox-setup-summary.md](nemoclaw/04-sandbox-setup-summary.md) 샌드박스 권한 설정 가이드
 - [nemoclaw/03-policy-verification.md](nemoclaw/03-policy-verification.md) 정책 검증 기록, 승인 출처 검사 확인
-- [sandbox-layout.html](sandbox-layout.html) 샌드박스 배치도. 옛 이름과 옛 배치로 그려져 있음
+- [sandbox-layout.html](sandbox-layout.html) 샌드박스 배치도. 목표 구조
 - [ports.md](ports.md) 포트 정리
 - RFA_module `docs/develop_plan.md` 파이프라인 쪽 단계
