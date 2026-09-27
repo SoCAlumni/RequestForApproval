@@ -4,6 +4,8 @@
 
 구조와 이름은 [architecture-decisions.md](architecture-decisions.md)를 따른다. 샌드박스 이름은 기밀 등급을 따라 `public`(공개), `team`(업무 내부)이다.
 
+해커톤 시연에서는 모든 샌드박스가 외부 API(NVIDIA Endpoints)로 추론한다. 기밀 등급을 로컬 추론으로 돌리는 것과 gateway 분리는 시연 뒤의 목표 구조다 (D14). 그래서 **시연에는 합성 자료만 넣는다.**
+
 상태 표기: ✅ 끝남 · 🔶 진행 중 · ⬜ 시작 전 · ⛔ 막힘
 
 ### 1. 목표
@@ -24,18 +26,18 @@
 | M1 | 호스트 파이프라인 | 호스트에서 멘션 1건이 게시까지 감 | 🔶 RFA_module Step 8 머지, Step 9 PR 열림 |
 | M2 | 네트워크 정책 | 검증 스크립트 전 항목 통과 | ✅ `my-assistant`에서 확인 |
 | M3 | `public` 샌드박스 | 정책과 에이전트 명단이 적용된 `public`이 Ready, 도구 제한 확인 | 🔶 옛 이름 `rfa`로 만들어 봄 |
-| M3b | `team` 샌드박스와 기밀용 gateway | gateway 두 개가 같이 뜨고, `team`의 추론이 로컬로만 감 | ⬜ 미검증 |
+| M3b | `team` 샌드박스 | `public`과 같은 gateway에 `team`이 Ready, 두 샌드박스가 서로의 파일과 경로에 닿지 못함 | ⬜ |
 | M4 | 샌드박스 안에서 파이프라인 실행 | 샌드박스 안에서 멘션 1건이 "결재 대기"까지 감 | ⛔ 모델 호출 방식 불일치, 기밀 검토 위치 변경 필요 |
 | M5 | 전체 시연 | 1절의 세 장면을 한 번씩 재현 | ⬜ |
 | M6 | UI | 결재함과 차단 기록이 실제 데이터로 보임 | 🔶 별도 작업 폴더 `console-ui` |
 | M7 | 제출 | README 실행법, 시연 대본, `main` 머지 | ⬜ |
 
-핵심 경로는 M3 → M4 → M5다. M3b는 M4와 나란히 갈 수 있다. M1~M3은 따로 만든 부품이고 M4가 처음으로 합치는 단계다. M6은 M4가 끝나야 보여줄 실제 데이터가 생긴다.
+핵심 경로는 M3 → M4 → M5다. M3b는 M4와 나란히 갈 수 있고, 시연의 정상 흐름에는 `public`만 있어도 된다. M1~M3은 따로 만든 부품이고 M4가 처음으로 합치는 단계다. M6은 M4가 끝나야 보여줄 실제 데이터가 생긴다.
 
 ### 3. 지금 상태
 
 - 샌드박스: 옛 이름인 `my-assistant`와 `rfa`로 만들어 봤다. `public`과 `team`으로 옮기는 중이다. 옮기는 순서는 [architecture-decisions.md](architecture-decisions.md) 13절.
-- 추론: OpenShell은 gateway 하나에 추론 경로를 하나만 둔다. `rfa`를 로컬 Ollama로 온보딩하자 같은 gateway의 `my-assistant`도 경로가 바뀌었다. 등급별로 제공자를 다르게 쓰려면 gateway를 나눠야 한다.
+- 추론: OpenShell은 gateway 하나에 추론 경로를 하나만 둔다. `rfa`를 로컬 Ollama로 온보딩하자 같은 gateway의 `my-assistant`도 경로가 바뀌었다. 등급별로 제공자를 다르게 쓰려면 gateway를 나눠야 한다. 시연에서는 gateway 하나에 제공자 하나(NVIDIA Endpoints)로 간다.
 - 호스트 서비스: review(8790), knowledge(8791) 실행 중. GitHub MCP(8792)는 안 띄움.
 - 정책: `rfa-host-services`가 `my-assistant`에 임시로 붙어 있다.
 - RFA_module: `main`이 Step 8(`e1864f7`)까지 왔다. 로컬 클론과 `modules.yaml`의 `ref`는 아직 Step 7(`a243c37`)이다.
@@ -66,24 +68,26 @@ nemoclaw public agent --agent public-desk -m "ls /sandbox 를 실행해서 결�
 
 > 💡 앞선 온보딩 기록에 `agent_setup: skipped`가 있었다. 명단이 실제로 들어갔는지 3-3에서 꼭 확인한다.
 
-> 💡 `public`을 NVIDIA Endpoints로 온보딩하면 그 gateway의 추론이 외부로 나간다. 지금 knowledge 답변에는 데모용 기밀이 그대로 들어 있으므로, 5절의 4-9가 끝나기 전에 `public`에서 워크플로를 실제 모델로 돌리지 않는다.
+> 💡 추론은 외부 제공자로 나간다. 시연에 쓰는 지식은 RFA_module의 합성 자료뿐이어야 한다. 실제 업무 자료를 넣지 않는다.
 
-M3b 세부 계획: `team` 샌드박스와 기밀용 gateway
+M3b 세부 계획: `team` 샌드박스
 
 | # | 할 일 | 끝났다는 기준 | 상태 |
 |---|---|---|---|
-| 3b-1 | Ollama를 context 8192로 띄움 | `ollama ps`에 8192, 전부 GPU | ⬜ |
-| 3b-2 | 기밀용 gateway(8090)에 `team` 온보딩 | gateway 두 개가 같이 뜸. `nemoclaw list`에 `team` | ⬜ |
-| 3b-3 | 추론 경로 분리 확인 | `public`은 NVIDIA Endpoints, `team`은 Ollama로 응답. 한쪽을 바꿔도 다른 쪽이 안 바뀜 | ⬜ |
-| 3b-4 | 기밀용 gateway에 외부 제공자 키가 없는지 확인 | 등록된 제공자가 Ollama뿐 | ⬜ |
+| 3b-1 | gateway의 추론 경로 확인 | `openshell inference get`이 NVIDIA Endpoints | ⬜ |
+| 3b-2 | `team` 온보딩. `public`과 같은 gateway | `nemoclaw list`에 `public`, `team` 둘 다 Ready | ⬜ |
+| 3b-3 | 에이전트 명단 반영 확인 | `nemoclaw team agents list`에 `main`, `task-orbit`, `censor-public` | ⬜ |
+| 3b-4 | 샌드박스 분리 확인 | `team`에서 만든 파일이 `public`에서 안 보임. `team`은 `public`용 호스트 경로에 닿지 못함 | ⬜ |
 | 3b-5 | `team`의 정책 작성과 적용 | `team`에서 필요한 호스트 서비스만 닿음 | ⬜ |
+| 3b-6 | 메모리 확인 | 샌드박스 두 개가 같이 떠 있을 때의 사용량 기록 | ⬜ |
 
 ```bash
-pkill -f 'ollama serve'; OLLAMA_CONTEXT_LENGTH=8192 ollama serve &
-NEMOCLAW_GATEWAY_PORT=8090 nemoclaw onboard --name team --agents agents/team.yaml --no-gpu --control-ui-port 18791
+openshell inference get
+nemoclaw onboard --name team --agents agents/team.yaml --no-gpu --control-ui-port 18791
+nemoclaw team agents list
 ```
 
-이 PC에서 gateway를 두 개 띄워 본 적이 없다. 3b-2가 안 되면 모든 샌드박스를 한 제공자로 통일하는 대안으로 간다 (architecture-decisions.md 4절).
+`team`이 어떤 호스트 서비스를 부를지는 4-9의 전달 방식에 달려 있다. 정해지기 전에는 3b-5를 비워 둔다.
 
 ### 5. M4 세부 계획: 샌드박스 안에서 파이프라인 실행
 
@@ -96,7 +100,7 @@ POST https://inference.local/v1/chat/completions → 200
 
 | # | 할 일 | 끝났다는 기준 | 어디서 | 상태 |
 |---|---|---|---|---|
-| 4-1 | 추론 모델 결정 | 등급별로 정함. 공개는 NVIDIA Endpoints, 기밀은 로컬 Ollama | 결정 | ✅ |
+| 4-1 | 추론 모델 결정 | 시연은 모든 샌드박스가 NVIDIA Endpoints. 로컬 추론은 시연 뒤 | 결정 | ✅ |
 | 4-2 | 워크플로에 OpenAI 방식 추가 | `RFA_LLM_MODE=openai`로 단위 테스트 통과 | RFA_module PR | ⬜ |
 | 4-3 | 호스트에서 실제 모델로 1회 실행 | 호스트에서 멘션 1건이 "결재 대기"까지 감 | 호스트 | ⬜ |
 | 4-4 | 샌드박스 python의 추론 호출 확인 | 샌드박스 안 python이 `inference.local`에서 200 | `public` | ⬜ |
@@ -104,7 +108,7 @@ POST https://inference.local/v1/chat/completions → 200
 | 4-6 | 샌드박스 안에서 실행 | 멘션 JSON 1건 → review 문서가 `reviewed` | `public` | ⬜ |
 | 4-7 | GitHub MCP 등록 | `nemoclaw public mcp status --tools`에 읽기 도구 2개 | 호스트 + `public` | ⬜ |
 | 4-8 | 입구 연결 | 멘션이 생기면 사람 손 없이 4-6이 실행됨 | `public` | ⬜ |
-| 4-9 | 기밀 검토를 등급 경계 앞으로 옮김 | knowledge가 걸러낸 답변만 돌려주고, `public`에는 기밀이 들어오지 않음 | RFA_module, knowledge | ⬜ 팀 확인 전 |
+| 4-9 | 기밀 검토를 등급 경계 앞으로 옮김 | knowledge가 걸러낸 답변만 돌려주고, `public`에는 기밀이 들어오지 않음 | RFA_module, knowledge | ⬜ 시연 필수 아님. 팀 확인 전 |
 
 4-2 구현 메모:
 
@@ -133,7 +137,7 @@ POST https://inference.local/v1/chat/completions → 200
 
 - 지금 구현에서는 기밀 검토(`censor_public`)가 `public` 안에서 돈다. 그러면 걸러지기 전의 knowledge 답변이 `public`으로 들어오고, 그 내용이 추론 호출에 실려 외부 제공자로 나간다.
 - 바꾸는 방향: knowledge API가 독자 범위를 받아 걸러낸 답변만 돌려준다. 기밀 검토는 `team` 쪽에서 돈다. 호스트의 스캐너와 사람 결재는 두 번째 관문으로 그대로 둔다.
-- 마감까지 4-9를 못 하면 시연은 `public`도 로컬 모델로 돌린다. 기밀이 밖으로 나가지 않는 대신 글의 품질이 떨어진다.
+- 시연에는 합성 자료만 쓰므로 4-9가 없어도 실제 피해는 없다. 시간이 되면 하고, 안 되면 시연에서는 "목표 구조"로 설명하고 뒤로 미룬다.
 
 ### 6. M5 세부 계획: 전체 시연
 
@@ -164,21 +168,20 @@ POST https://inference.local/v1/chat/completions → 200
 | 위험 | 영향 | 대응 |
 |---|---|---|
 | 모델 호출 방식 불일치 | M4 전체가 막힘 | 4-2 |
-| 로컬 모델의 품질 | 기밀검토가 JSON을 틀리게 내거나 판단이 약할 수 있음. 미확인 | 4-3에서 확인 |
-| gateway 두 개 | 이 PC에서 띄워 본 적 없음 | 3b-2에서 먼저 확인. 안 되면 한 제공자로 통일 |
-| 기밀 검토 위치 변경 | 세 사람의 코드가 함께 바뀜 | 미팅에서 확정. 못 하면 `public`도 로컬 모델로 |
+| 실제 자료가 섞임 | 추론이 외부로 나가므로 실제 업무 자료가 들어가면 그대로 나감 | 시연 지식은 RFA_module의 합성 자료만. 넣기 전에 확인 |
+| 기밀 검토 위치 변경 | 세 사람의 코드가 함께 바뀜 | 시연 필수가 아님. 미팅에서 범위 확정 |
 | 승인 출처 검사가 뚫림 | `host.docker.internal` 경로로 들어온 요청이 사람의 요청으로 보임. 샌드박스에서는 정책이 막고 있음 | 승인용 토큰으로 교체. 정책에는 IP만 씀 |
 | 인증서와 MCP 등록 | 해 본 사람이 없음. CA를 늦게 넣으면 샌드박스 재생성 | 3-1에서 먼저 결정, 안 되면 4-8의 나 |
 | 호스트 IP 변경 | WSL을 재시작하면 정책이 전부 어긋남 | 스크립트가 IP를 자동으로 찾게 함 |
 | 온보딩 실패 | 오늘 오류를 여러 번 만남 | 시연 전날에 샌드박스를 확정하고 건드리지 않음 |
-| NVIDIA 무료 한도 | 분당 약 40회. 워크플로 1회에 모델을 여러 번 부름 | 팀원별 키, 또는 로컬 모델 |
+| NVIDIA 무료 한도 | 분당 약 40회를 모든 샌드박스가 같이 씀. 워크플로 1회에 모델을 여러 번 부름 | 시연 중에는 한 번에 한 흐름만. 팀원별 키 |
 
 ### 9. 정해야 할 것
 
 | 항목 | 선택지 | 권하는 쪽 |
 |---|---|---|
-| 기밀 검토 위치 (4-9) | 지금대로 `public` 안 / `team`으로 옮김 | 옮김. 결정은 했고 팀 확인이 남음 |
-| gateway 분리 | 나눔 / 한 제공자로 통일 | 나눔. 3b-2 결과에 따름 |
+| 기밀 검토 위치 (4-9) | 지금대로 `public` 안 / `team`으로 옮김 | 옮김이 목표. 시연까지 할지는 미팅에서 |
+| gateway 분리 | 시연 전 / 시연 뒤 | 시연 뒤 |
 | 승인 확인 방식 | 출처 주소 / 승인용 토큰 | 승인용 토큰 |
 | 입구 (4-8) | 가 / 나 / 다 | 가를 시도, 안 되면 나 |
 | 샌드박스 수 | 2개 / 4개 | 첫 구현은 `public`과 `team` 2개. `company`, `division`은 구조만 |
@@ -189,9 +192,9 @@ POST https://inference.local/v1/chat/completions → 200
 | 시간 | 할 일 |
 |---|---|
 | 9/27 오전 | 구조 결정, 옛 이름으로 만들어 본 샌드박스에서 정책 검증 |
-| 9/27 오후 | M3b gateway 분리 확인, M3 `public` 생성, 4-2 구현과 PR, 4-3 호스트 실행 |
-| 9/27 저녁 | 팀 미팅. 9절 확정, 4-9 담당과 범위 결정 |
-| 9/28 오전 | 4-4 ~ 4-9, M5 시연 재현 |
+| 9/27 오후 | M3 `public`, M3b `team` 생성, 4-2 구현과 PR, 4-3 호스트 실행 |
+| 9/27 저녁 | 팀 미팅. 9절 확정, 4-9를 시연까지 할지 결정 |
+| 9/28 오전 | 4-4 ~ 4-8, M5 시연 재현 |
 | 9/28 오후 | M6 실제 데이터 연결, M7 제출 자료 |
 | 9/28 20:00 | 기능 추가 중단. 이후는 문서와 시연 기록만 |
 | 9/28 23:59 | 제출 |
