@@ -60,6 +60,7 @@
   .z-host  { fill: var(--zone); stroke: var(--line); stroke-width: 1; }
   .bx      { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
   .list    { fill: var(--plan-bg); stroke: var(--plan); stroke-width: 1.4; }
+  .gate    { fill: var(--allow-bg); stroke: var(--allow); stroke-width: 1.8; }
   .plan    { stroke-dasharray: 6 4; }
   .zt      { fill: var(--ink); font-size: 14px; font-weight: 700; }
   .t       { fill: var(--ink); font-size: 13.5px; font-weight: 600; }
@@ -79,6 +80,7 @@
   th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
   tr:last-child td { border-bottom: 0; }
+  td b { font-weight: 600; }
   .pill { font-size: 12px; font-weight: 600; padding: 2px 10px; border-radius: 999px; white-space: nowrap; }
   .pill.pub  { background: var(--allow-bg); color: var(--allow); }
   .pill.conf { background: var(--conf); color: var(--ink); border: 1px solid var(--line); }
@@ -89,151 +91,158 @@
 <div class="page">
 
 <header>
-  <span class="eyebrow">RequestForApproval · 2026-09-27 · 제안</span>
+  <span class="eyebrow">RequestForApproval · 2026-09-27</span>
   <h1>RFA 에이전트 배치</h1>
-  <p class="lede">에이전트는 자기가 읽는 자료의 등급에 맞는 영역에 둔다. 바깥과 닿는 대응 에이전트는 공개 영역에, 원자료를 읽는 실무 에이전트와 기준을 읽는 검열 에이전트는 기밀 영역에 둔다. 두 영역은 호스트의 API로만 이어진다.</p>
-  <p class="lede">샌드박스는 기밀 영역에만 둔다. 공개 영역의 에이전트는 샌드박스 없이 호스트에서 돈다.</p>
+  <p class="lede">기밀에 대한 판단은 모두 기밀 영역을 떠나기 전에 끝낸다. 검열 에이전트가 거른 것을 사람이 꼼꼼히 검사하고, 승인한 지식만 공개 영역으로 간다. 공개 영역의 대응 에이전트는 받은 글을 다듬기만 한다.</p>
+  <p class="lede">샌드박스는 기밀 영역에만 둔다. 두 영역은 호스트의 API로만 이어진다.</p>
 </header>
 
 <figure>
   <div class="scroll">
-  <svg viewBox="0 0 1100 610" role="img" aria-label="공개 영역에는 업무마다 대응 에이전트가 있고, 기밀 영역에는 head agent 와 업무마다 실무 에이전트, 그리고 검열 에이전트 둘이 있다. 외부 질문은 대응 에이전트에서 호스트 API 를 거쳐 head agent 로 가고, 실무 에이전트의 답변 원문은 검열 에이전트를 거쳐 걸러진 뒤에만 공개 영역으로 돌아온다. 초안은 호스트의 코드 검사와 사람의 결재를 거쳐 게시된다.">
+  <svg viewBox="0 0 1100 690" role="img" aria-label="공개 영역에는 업무마다 대응 에이전트가 있고, 기밀 영역에는 head agent 와 업무마다 실무 에이전트, 검열 에이전트 둘이 있다. 실무 에이전트의 답변 원문은 검열 에이전트가 거른 뒤 사람의 기밀 검사를 받고, 승인된 지식만 호스트 API 를 거쳐 공개 영역의 대응 에이전트에게 간다. 대응 에이전트는 다듬기만 하고, 호스트가 코드 검사와 확인 뒤에 게시한다.">
     <defs>
       <marker id="h-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-ink"/></marker>
       <marker id="h-allow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-allow"/></marker>
       <marker id="h-plan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-plan"/></marker>
     </defs>
 
+    <!-- 기밀 검사: 사람 -->
+    <rect class="gate" x="440" y="28" width="260" height="68" rx="8"/>
+    <text class="t" x="570" y="58" text-anchor="middle">기밀 검사 · 사람</text>
+    <text class="s" x="570" y="79" text-anchor="middle">원문과 걸러낸 안을 비교해 승인</text>
+
     <!-- 영역 제목 -->
-    <text class="zt" x="180" y="46">공개 영역</text>
-    <text class="s" x="430" y="46" text-anchor="end">샌드박스 없음 · 호스트에서 실행</text>
-    <text class="zt" x="460" y="46">호스트</text>
-    <text class="zt" x="630" y="46">기밀 영역</text>
-    <text class="s" x="1080" y="46" text-anchor="end">샌드박스 team</text>
+    <text class="zt" x="180" y="126">공개 영역</text>
+    <text class="s" x="430" y="126" text-anchor="end">샌드박스 없음</text>
+    <text class="zt" x="630" y="126">기밀 영역</text>
+    <text class="s" x="1080" y="126" text-anchor="end">샌드박스 team</text>
 
     <!-- 영역 -->
-    <rect class="z-pub"  x="180" y="60" width="250" height="410" rx="10"/>
-    <rect class="z-host" x="460" y="60" width="140" height="410" rx="10"/>
-    <rect class="z-conf" x="630" y="60" width="450" height="410" rx="10"/>
+    <rect class="z-pub"  x="180" y="140" width="250" height="410" rx="10"/>
+    <rect class="z-host" x="460" y="140" width="140" height="410" rx="10"/>
+    <rect class="z-conf" x="630" y="140" width="450" height="410" rx="10"/>
+    <text class="s" x="590" y="162" text-anchor="end">호스트</text>
 
     <!-- 밖 -->
-    <rect class="bx" x="20" y="110" width="130" height="70" rx="6"/>
-    <text class="t" x="85" y="141" text-anchor="middle">외부 질문</text>
-    <text class="s" x="85" y="162" text-anchor="middle">GitHub 멘션</text>
+    <rect class="bx" x="20" y="190" width="130" height="70" rx="6"/>
+    <text class="t" x="85" y="221" text-anchor="middle">외부 질문</text>
+    <text class="s" x="85" y="242" text-anchor="middle">GitHub 멘션</text>
 
     <!-- 공개 영역: 대응 에이전트 -->
-    <rect class="bx" x="200" y="110" width="210" height="70" rx="6"/>
-    <text class="t" x="305" y="141" text-anchor="middle">대응 에이전트</text>
-    <text class="s" x="305" y="162" text-anchor="middle">ORBIT 벤치마크</text>
-    <rect class="bx" x="200" y="210" width="210" height="70" rx="6"/>
-    <text class="t" x="305" y="241" text-anchor="middle">대응 에이전트</text>
-    <text class="s" x="305" y="262" text-anchor="middle">양자화 조사</text>
-    <rect class="bx" x="200" y="310" width="210" height="70" rx="6"/>
-    <text class="t" x="305" y="341" text-anchor="middle">대응 에이전트</text>
-    <text class="s" x="305" y="362" text-anchor="middle">PRISM 개발</text>
-    <text class="s" x="305" y="420" text-anchor="middle">걸러진 답변만 들어온다</text>
-    <text class="s" x="305" y="440" text-anchor="middle">도구 없이 글만 쓴다</text>
+    <rect class="bx" x="200" y="190" width="210" height="70" rx="6"/>
+    <text class="t" x="305" y="221" text-anchor="middle">대응 에이전트</text>
+    <text class="s" x="305" y="242" text-anchor="middle">ORBIT 벤치마크</text>
+    <rect class="bx" x="200" y="290" width="210" height="70" rx="6"/>
+    <text class="t" x="305" y="321" text-anchor="middle">대응 에이전트</text>
+    <text class="s" x="305" y="342" text-anchor="middle">양자화 조사</text>
+    <rect class="bx" x="200" y="390" width="210" height="70" rx="6"/>
+    <text class="t" x="305" y="421" text-anchor="middle">대응 에이전트</text>
+    <text class="s" x="305" y="442" text-anchor="middle">PRISM 개발</text>
+    <text class="s" x="305" y="500" text-anchor="middle">승인된 지식만 들어온다</text>
+    <text class="s" x="305" y="520" text-anchor="middle">다듬기만 한다 · 도구 없음</text>
 
     <!-- 호스트: API, 목록 -->
-    <rect class="bx" x="475" y="110" width="110" height="70" rx="6"/>
-    <text class="t" x="530" y="134" text-anchor="middle">API</text>
-    <text class="s" x="530" y="153" text-anchor="middle">검열 표시 확인</text>
-    <text class="s" x="530" y="170" text-anchor="middle">코드 검사</text>
-    <text class="s" x="530" y="222" text-anchor="middle">영역끼리</text>
-    <text class="s" x="530" y="240" text-anchor="middle">직접 통신 없음</text>
-    <rect class="list" x="475" y="300" width="110" height="70" rx="6"/>
-    <text class="t" x="530" y="331" text-anchor="middle">허용·차단</text>
-    <text class="s" x="530" y="352" text-anchor="middle">목록</text>
+    <rect class="bx" x="492" y="190" width="93" height="70" rx="6"/>
+    <text class="t" x="538" y="214" text-anchor="middle">API</text>
+    <text class="s" x="538" y="233" text-anchor="middle">승인 표시 확인</text>
+    <text class="s" x="538" y="250" text-anchor="middle">코드 검사</text>
+    <rect class="list" x="492" y="380" width="93" height="70" rx="6"/>
+    <text class="t" x="538" y="411" text-anchor="middle">허용·차단</text>
+    <text class="s" x="538" y="432" text-anchor="middle">목록</text>
+    <text class="s" x="538" y="498" text-anchor="middle">영역끼리</text>
+    <text class="s" x="538" y="516" text-anchor="middle">직접 통신 없음</text>
 
     <!-- 기밀 영역: head agent -->
-    <rect class="bx" x="650" y="110" width="100" height="270" rx="6"/>
-    <text class="t" x="700" y="232" text-anchor="middle">head agent</text>
-    <text class="s" x="700" y="254" text-anchor="middle">비서</text>
-    <text class="s" x="700" y="274" text-anchor="middle">기밀까지 읽음</text>
+    <rect class="bx" x="650" y="190" width="100" height="270" rx="6"/>
+    <text class="t" x="700" y="312" text-anchor="middle">head agent</text>
+    <text class="s" x="700" y="334" text-anchor="middle">비서</text>
+    <text class="s" x="700" y="354" text-anchor="middle">기밀까지 읽음</text>
 
     <!-- 기밀 영역: 실무 에이전트 -->
-    <rect class="bx" x="790" y="110" width="140" height="70" rx="6"/>
-    <text class="t" x="860" y="141" text-anchor="middle">실무 에이전트</text>
-    <text class="s" x="860" y="162" text-anchor="middle">ORBIT 벤치마크</text>
-    <rect class="bx" x="790" y="210" width="140" height="70" rx="6"/>
-    <text class="t" x="860" y="241" text-anchor="middle">실무 에이전트</text>
-    <text class="s" x="860" y="262" text-anchor="middle">양자화 조사</text>
-    <rect class="bx" x="790" y="310" width="140" height="70" rx="6"/>
-    <text class="t" x="860" y="341" text-anchor="middle">실무 에이전트</text>
-    <text class="s" x="860" y="362" text-anchor="middle">PRISM 개발</text>
+    <rect class="bx" x="790" y="190" width="140" height="70" rx="6"/>
+    <text class="t" x="860" y="221" text-anchor="middle">실무 에이전트</text>
+    <text class="s" x="860" y="242" text-anchor="middle">ORBIT 벤치마크</text>
+    <rect class="bx" x="790" y="290" width="140" height="70" rx="6"/>
+    <text class="t" x="860" y="321" text-anchor="middle">실무 에이전트</text>
+    <text class="s" x="860" y="342" text-anchor="middle">양자화 조사</text>
+    <rect class="bx" x="790" y="390" width="140" height="70" rx="6"/>
+    <text class="t" x="860" y="421" text-anchor="middle">실무 에이전트</text>
+    <text class="s" x="860" y="442" text-anchor="middle">PRISM 개발</text>
 
     <!-- 기밀 영역: 검열 에이전트 -->
-    <rect class="bx" x="960" y="110" width="106" height="125" rx="6"/>
-    <text class="t" x="1013" y="158" text-anchor="middle">검열 에이전트</text>
-    <text class="s" x="1013" y="180" text-anchor="middle">비기밀용</text>
-    <text class="s" x="1013" y="200" text-anchor="middle">공개로 나가는 글</text>
-    <rect class="bx plan" x="960" y="255" width="106" height="125" rx="6"/>
-    <text class="t" x="1013" y="303" text-anchor="middle">검열 에이전트</text>
-    <text class="s" x="1013" y="325" text-anchor="middle">기밀용</text>
-    <text class="s" x="1013" y="345" text-anchor="middle">사내로 나가는 글</text>
+    <rect class="bx" x="960" y="190" width="106" height="125" rx="6"/>
+    <text class="t" x="1013" y="238" text-anchor="middle">검열 에이전트</text>
+    <text class="s" x="1013" y="260" text-anchor="middle">비기밀용</text>
+    <text class="s" x="1013" y="280" text-anchor="middle">공개로 나가는 글</text>
+    <rect class="bx plan" x="960" y="335" width="106" height="125" rx="6"/>
+    <text class="t" x="1013" y="383" text-anchor="middle">검열 에이전트</text>
+    <text class="s" x="1013" y="405" text-anchor="middle">기밀용</text>
+    <text class="s" x="1013" y="425" text-anchor="middle">사내로 나가는 글</text>
 
-    <text class="s" x="855" y="420" text-anchor="middle">원자료, 기억, 기밀 기준이 여기에만 있다</text>
-    <text class="s" x="855" y="440" text-anchor="middle">업무끼리 기억을 나눠야 하면 샌드박스를 더 나눈다</text>
+    <text class="s" x="855" y="500" text-anchor="middle">원자료, 기억, 기밀 기준이 여기에만 있다</text>
+    <text class="s" x="855" y="520" text-anchor="middle">업무끼리 기억을 나눠야 하면 샌드박스를 더 나눈다</text>
 
     <!-- 흐름: ORBIT 한 건 -->
-    <line class="a a-allow" x1="150" y1="145" x2="199" y2="145" marker-end="url(#h-allow)"/>
-    <text class="n" x="175" y="136" text-anchor="middle">1</text>
+    <line class="a a-allow" x1="150" y1="225" x2="199" y2="225" marker-end="url(#h-allow)"/>
+    <text class="n" x="175" y="216" text-anchor="middle">1</text>
 
-    <line class="a a-allow" x1="410" y1="132" x2="474" y2="132" marker-end="url(#h-allow)"/>
-    <text class="n" x="442" y="123" text-anchor="middle">2 질문</text>
-    <line class="a a-allow" x1="585" y1="132" x2="649" y2="132" marker-end="url(#h-allow)"/>
+    <line class="a a-allow" x1="410" y1="212" x2="491" y2="212" marker-end="url(#h-allow)"/>
+    <text class="n" x="450" y="203" text-anchor="middle">2 질문</text>
+    <line class="a a-allow" x1="585" y1="212" x2="649" y2="212" marker-end="url(#h-allow)"/>
 
-    <line class="a a-allow" x1="750" y1="145" x2="789" y2="145" marker-end="url(#h-allow)"/>
-    <text class="n" x="770" y="136" text-anchor="middle">3</text>
-    <line class="a a-ink" x1="750" y1="245" x2="789" y2="245" marker-end="url(#h-ink)"/>
-    <line class="a a-ink" x1="750" y1="345" x2="789" y2="345" marker-end="url(#h-ink)"/>
+    <line class="a a-allow" x1="750" y1="225" x2="789" y2="225" marker-end="url(#h-allow)"/>
+    <text class="n" x="770" y="216" text-anchor="middle">3</text>
+    <line class="a a-ink" x1="750" y1="325" x2="789" y2="325" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="750" y1="425" x2="789" y2="425" marker-end="url(#h-ink)"/>
 
-    <line class="a a-allow" x1="930" y1="145" x2="959" y2="145" marker-end="url(#h-allow)"/>
-    <text class="n" x="945" y="136" text-anchor="middle">4</text>
+    <line class="a a-allow" x1="930" y1="225" x2="959" y2="225" marker-end="url(#h-allow)"/>
+    <text class="n" x="945" y="216" text-anchor="middle">4</text>
 
-    <polyline class="a a-allow" points="1013,110 1013,84 530,84 530,109" marker-end="url(#h-allow)"/>
-    <text class="n" x="800" y="77" text-anchor="middle">5 걸러낸 답변</text>
-    <line class="a a-allow" x1="475" y1="162" x2="411" y2="162" marker-end="url(#h-allow)"/>
-    <text class="n" x="442" y="180" text-anchor="middle">5</text>
+    <polyline class="a a-allow" points="1013,190 1013,62 701,62" marker-end="url(#h-allow)"/>
+    <text class="n" x="860" y="53" text-anchor="middle">5 원문, 걸러낸 안, 사유</text>
 
-    <!-- 호스트: 검사, 결재, 게시 -->
-    <rect class="z-host" x="280" y="495" width="600" height="95" rx="10"/>
-    <text class="s" x="296" y="515">호스트</text>
-    <rect class="bx" x="300" y="523" width="160" height="56" rx="6"/>
-    <text class="t" x="380" y="548" text-anchor="middle">코드 검사</text>
-    <text class="s" x="380" y="567" text-anchor="middle">비밀값 · 금칙어</text>
-    <rect class="bx" x="500" y="523" width="160" height="56" rx="6"/>
-    <text class="t" x="580" y="548" text-anchor="middle">결재</text>
-    <text class="s" x="580" y="567" text-anchor="middle">사람</text>
-    <rect class="bx" x="700" y="523" width="160" height="56" rx="6"/>
-    <text class="t" x="780" y="548" text-anchor="middle">게시</text>
-    <text class="s" x="780" y="567" text-anchor="middle">서명 확인 후</text>
-    <rect class="bx" x="930" y="523" width="140" height="56" rx="6"/>
-    <text class="t" x="1000" y="548" text-anchor="middle">GitHub 답글</text>
-    <text class="s" x="1000" y="567" text-anchor="middle">밖</text>
-
-    <polyline class="a a-allow" points="200,165 190,165 190,551 299,551" marker-end="url(#h-allow)"/>
-    <text class="n" x="198" y="488">6 초안</text>
-    <line class="a a-allow" x1="460" y1="551" x2="499" y2="551" marker-end="url(#h-allow)"/>
-    <line class="a a-allow" x1="660" y1="551" x2="699" y2="551" marker-end="url(#h-allow)"/>
-    <text class="n" x="680" y="542" text-anchor="middle">7</text>
-    <line class="a a-allow" x1="860" y1="551" x2="929" y2="551" marker-end="url(#h-allow)"/>
-    <text class="n" x="895" y="542" text-anchor="middle">8</text>
+    <line class="a a-allow" x1="550" y1="96" x2="550" y2="189" marker-end="url(#h-allow)"/>
+    <text class="n" x="558" y="116">6 승인된 지식</text>
+    <line class="a a-allow" x1="492" y1="242" x2="411" y2="242" marker-end="url(#h-allow)"/>
+    <text class="n" x="450" y="260" text-anchor="middle">6</text>
 
     <!-- 결정 → 목록 -->
-    <polyline class="a a-plan" points="580,523 580,482 530,482 530,371" marker-end="url(#h-plan)"/>
-    <text class="l-plan" x="540" y="410">결정을</text>
-    <text class="l-plan" x="540" y="427">추가</text>
+    <polyline class="a a-plan" points="474,96 474,415 491,415" marker-end="url(#h-plan)"/>
+    <text class="l-plan" x="482" y="310">결정을</text>
+    <text class="l-plan" x="482" y="327">추가</text>
+
+    <!-- 호스트: 검사, 확인, 게시 -->
+    <rect class="z-host" x="280" y="575" width="600" height="95" rx="10"/>
+    <text class="s" x="296" y="595">호스트</text>
+    <rect class="bx" x="300" y="603" width="160" height="56" rx="6"/>
+    <text class="t" x="380" y="628" text-anchor="middle">코드 검사</text>
+    <text class="s" x="380" y="647" text-anchor="middle">비밀값 · 금칙어</text>
+    <rect class="bx" x="500" y="603" width="160" height="56" rx="6"/>
+    <text class="t" x="580" y="628" text-anchor="middle">게시 전 확인</text>
+    <text class="s" x="580" y="647" text-anchor="middle">뜻이 바뀌지 않았는지</text>
+    <rect class="bx" x="700" y="603" width="160" height="56" rx="6"/>
+    <text class="t" x="780" y="628" text-anchor="middle">게시</text>
+    <text class="s" x="780" y="647" text-anchor="middle">서명 확인 후</text>
+    <rect class="bx" x="930" y="603" width="140" height="56" rx="6"/>
+    <text class="t" x="1000" y="628" text-anchor="middle">GitHub 답글</text>
+    <text class="s" x="1000" y="647" text-anchor="middle">밖</text>
+
+    <polyline class="a a-allow" points="200,245 190,245 190,631 299,631" marker-end="url(#h-allow)"/>
+    <text class="n" x="198" y="568">7 다듬은 글</text>
+    <line class="a a-allow" x1="460" y1="631" x2="499" y2="631" marker-end="url(#h-allow)"/>
+    <line class="a a-allow" x1="660" y1="631" x2="699" y2="631" marker-end="url(#h-allow)"/>
+    <line class="a a-allow" x1="860" y1="631" x2="929" y2="631" marker-end="url(#h-allow)"/>
+    <text class="n" x="895" y="622" text-anchor="middle">8</text>
   </svg>
   </div>
   <ul class="legend">
     <li><svg viewBox="0 0 38 14" aria-hidden="true"><line class="a a-allow" x1="1" y1="7" x2="36" y2="7"/></svg>ORBIT 업무 한 건의 흐름 (번호 순서)</li>
     <li><svg viewBox="0 0 38 14" aria-hidden="true"><line class="a a-ink" x1="1" y1="7" x2="36" y2="7"/></svg>다른 업무도 같은 길</li>
-    <li><svg viewBox="0 0 38 14" aria-hidden="true"><line class="a a-plan" x1="1" y1="7" x2="36" y2="7"/></svg>결재의 결정이 목록으로</li>
-    <li><svg viewBox="0 0 38 14" aria-hidden="true"><rect class="bx plan" x="2" y="2" width="34" height="10" rx="2"/></svg>점선 상자는 첫 구현에서 빠짐</li>
+    <li><svg viewBox="0 0 38 14" aria-hidden="true"><line class="a a-plan" x1="1" y1="7" x2="36" y2="7"/></svg>기밀 검사의 결정이 목록으로</li>
     <li><svg viewBox="0 0 38 14" aria-hidden="true"><rect class="z-conf" x="2" y="2" width="34" height="10" rx="2"/></svg>굵은 테두리는 샌드박스</li>
+    <li><svg viewBox="0 0 38 14" aria-hidden="true"><rect class="bx plan" x="2" y="2" width="34" height="10" rx="2"/></svg>점선 상자는 첫 구현에서 빠짐</li>
   </ul>
-  <figcaption>기밀은 검열 에이전트를 지난 뒤에만 기밀 영역을 떠난다. 공개 영역의 대응 에이전트는 바깥의 입력을 직접 읽지만 걸러진 답변만 가지고 있으므로, 속임수에 넘어가도 빼낼 기밀이 없다. 그래서 공개 영역에는 샌드박스를 두지 않는다. 검열 에이전트는 호스트의 허용·차단 목록을 읽기만 한다.</figcaption>
+  <figcaption>사람이 꼼꼼히 보는 곳은 맨 위의 기밀 검사 하나다. 여기서 승인한 지식만 경계를 넘는다. 대응 에이전트가 글을 다듬을 때 외부 추론 제공자에게 가는 것도 이미 승인된 지식뿐이다.</figcaption>
 </figure>
 
 <section>
@@ -243,11 +252,27 @@
     <li>대응 에이전트가 호스트 API로 질문을 넘긴다. head agent가 받는다.</li>
     <li>head agent가 그 업무의 실무 에이전트에게 맡긴다.</li>
     <li>실무 에이전트가 원자료를 근거로 답변 원문을 쓰고, 검열 에이전트에게 넘긴다.</li>
-    <li>검열 에이전트가 기밀을 걸러 낸다. 걸러낸 답변만 API를 거쳐 대응 에이전트에게 돌아간다.</li>
-    <li>대응 에이전트가 초안을 써서 호스트에 제출한다. 코드 검사가 먼저 돈다.</li>
-    <li>사람이 결재한다.</li>
-    <li>호스트가 게시한다.</li>
+    <li>검열 에이전트가 기밀을 걸러 낸 안을 만들고, 원문과 사유를 함께 사람에게 올린다.</li>
+    <li>사람이 검사한다. 승인한 지식만 API를 거쳐 대응 에이전트에게 간다.</li>
+    <li>대응 에이전트가 글을 다듬어 호스트에 제출한다.</li>
+    <li>호스트가 코드 검사와 게시 전 확인을 거쳐 게시한다.</li>
   </ol>
+</section>
+
+<section>
+  <h2>사람이 보는 두 곳</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>기밀 검사 (6번)</th><th>게시 전 확인 (8번)</th></tr></thead>
+    <tbody>
+      <tr><td>보는 것</td><td>원문, 걸러낸 안, 걸린 사유, 출처</td><td>승인된 지식과 다듬은 글의 차이</td></tr>
+      <tr><td>판단하는 것</td><td>이 내용이 이 독자에게 나가도 되는가</td><td>다듬으면서 뜻이 바뀌거나 없던 말이 생기지 않았는가</td></tr>
+      <tr><td>무게</td><td><b>무겁다.</b> 기밀 판단은 여기서 끝낸다</td><td>가볍다</td></tr>
+      <tr><td>결정이 목록으로</td><td>쌓인다</td><td>쌓이지 않는다</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="margin-top:12px" class="lede">게시 전 확인을 사람이 볼지, 코드 검사만으로 넘길지는 정하지 않았다.</p>
 </section>
 
 <section>
@@ -256,11 +281,11 @@
   <table>
     <thead><tr><th>에이전트</th><th>영역</th><th>수</th><th>읽는 것</th><th>내보내는 것</th></tr></thead>
     <tbody>
-      <tr><td>대응 에이전트</td><td><span class="pill pub">공개</span> 샌드박스 없음</td><td>업무마다 하나</td><td>바깥의 질문, 걸러진 답변</td><td>초안</td></tr>
+      <tr><td>대응 에이전트</td><td><span class="pill pub">공개</span> 샌드박스 없음</td><td>업무마다 하나</td><td>바깥의 질문, 승인된 지식</td><td>다듬은 글</td></tr>
       <tr><td>head agent</td><td><span class="pill conf">기밀</span> 샌드박스</td><td>하나</td><td>공개 쪽에서 온 질문, 기밀 영역의 답변</td><td>실무 에이전트에게 일을 맡김</td></tr>
       <tr><td>실무 에이전트</td><td><span class="pill conf">기밀</span></td><td>업무마다 하나</td><td>업무 원자료, 기억</td><td>답변 원문</td></tr>
-      <tr><td>검열 에이전트 · 비기밀용</td><td><span class="pill conf">기밀</span></td><td>하나</td><td>답변 원문, 기밀 기준, 허용·차단 목록</td><td>공개로 나갈 수 있게 걸러낸 답변</td></tr>
-      <tr><td>검열 에이전트 · 기밀용</td><td><span class="pill conf">기밀</span></td><td>하나</td><td>위와 같음</td><td>사내로 나갈 수 있게 걸러낸 답변. 첫 구현에서 빠짐</td></tr>
+      <tr><td>검열 에이전트 · 비기밀용</td><td><span class="pill conf">기밀</span></td><td>하나</td><td>답변 원문, 기밀 기준, 허용·차단 목록</td><td>걸러낸 안과 사유. 사람에게 검사를 요청</td></tr>
+      <tr><td>검열 에이전트 · 기밀용</td><td><span class="pill conf">기밀</span></td><td>하나</td><td>위와 같음</td><td>사내로 나가는 글용. 첫 구현에서 빠짐</td></tr>
     </tbody>
   </table>
   </div>
@@ -268,53 +293,38 @@
 
 <section>
   <h2>공개 영역에 샌드박스를 두지 않는 조건</h2>
-  <p>샌드박스가 없으면 프록시가 막아 주던 것을 다른 것이 대신 막아야 한다. 아래 넷이 지켜질 때만 성립한다.</p>
-  <div class="tablewrap" style="margin-top:14px">
+  <div class="tablewrap">
   <table>
-    <thead><tr><th>조건</th><th>이유</th><th>지금 상태</th></tr></thead>
+    <thead><tr><th>조건</th><th>상태</th></tr></thead>
     <tbody>
-      <tr><td>공개 영역에 기밀이 들어오지 않는다</td><td>샌드박스가 없으면 나가는 길을 막을 수 없다. 빼낼 것이 없어야 한다</td><td><b>전제로 둔다.</b> 기밀 영역에서 나오는 것은 이미 한 번 검열된 것으로 본다. RFA_module도 같은 가정을 쓴다</td></tr>
-      <tr><td>대응 에이전트에게 도구를 주지 않는다</td><td>모델이 글만 쓰고, 어디를 부를지는 코드가 정한다. 모델이 속아도 할 수 있는 일이 없다</td><td>RFA_module의 고정 워크플로가 이 모양이다</td></tr>
-      <tr><td>승인을 출처 주소로 확인하지 않는다</td><td>호스트에서 도는 프로그램은 모두 <code>127.0.0.1</code>에서 온 것으로 보인다</td><td>아직 아님. 승인용 토큰이 필요하다</td></tr>
-      <tr><td>게시 토큰과 승인용 토큰을 공개 영역의 프로세스가 읽지 못한다</td><td>같은 호스트에서 돌기 때문에 환경변수와 파일을 나눠야 한다</td><td>확인하지 않음</td></tr>
+      <tr><td>공개 영역에 기밀이 들어오지 않는다</td><td>충족. 사람이 승인한 지식만 들어온다</td></tr>
+      <tr><td>대응 에이전트에게 도구를 주지 않는다</td><td>충족. 다듬기만 하므로 도구가 필요 없다</td></tr>
+      <tr><td>승인을 출처 주소로 확인하지 않는다</td><td>아직 아님. 호스트에서 도는 프로그램은 모두 <code>127.0.0.1</code>로 보인다. 승인용 토큰이 필요하다</td></tr>
+      <tr><td>공개 영역이 원문을 읽지 못한다</td><td>아직 아님. 원문이 호스트의 결재 기록에 저장되는데, 지금 API는 결재 기록 전체를 돌려준다</td></tr>
+      <tr><td>토큰을 공개 영역의 프로세스가 읽지 못한다</td><td>확인하지 않음</td></tr>
     </tbody>
   </table>
   </div>
-</section>
-
-<section>
-  <h2>전제: 기밀 영역에서 나온 것은 이미 검열되어 있다</h2>
-  <p>공개 영역의 안전은 이 전제에 달려 있다. 전제가 깨졌을 때 드러나도록 두 가지를 둔다.</p>
-  <div class="tablewrap" style="margin-top:14px">
-  <table>
-    <thead><tr><th>장치</th><th>하는 일</th><th>두는 곳</th></tr></thead>
-    <tbody>
-      <tr><td>검열 표시</td><td>기밀 영역에서 나오는 답변에 "검열을 거쳤다"는 표시와 기준 버전, 독자 등급을 붙인다. 표시가 없는 답변은 공개 영역이 받지 않는다</td><td>호스트의 API</td></tr>
-      <tr><td>경계의 코드 검사</td><td>답변이 API를 지날 때 비밀값과 금칙어를 한 번 더 본다. 검열 에이전트가 놓친 것을 공개 영역에 닿기 전에 잡는다</td><td>호스트의 API</td></tr>
-    </tbody>
-  </table>
-  </div>
-  <p style="margin-top:12px" class="lede">경계에서 검사하는 이유: 대응 에이전트가 초안을 쓸 때 받은 답변이 외부 추론 제공자에게 간다. 사람의 결재는 그 뒤에 있으므로, 결재에서 걸러도 제공자에게는 이미 나간 뒤다.</p>
 </section>
 
 <section>
   <h2>이렇게 읽었다</h2>
   <ul class="open">
-    <li><b>head agent가 "걸쳐 있다"는 것.</b> 공개와 기밀의 자료를 모두 읽는다는 뜻으로 읽었다. 에이전트는 샌드박스 하나에만 속할 수 있으므로 기밀 영역에 두고, 공개 쪽과는 API로 주고받게 그렸다.</li>
-    <li><b>검열 에이전트가 "기밀, 비기밀로 있다"는 것.</b> 어디로 나가는 글을 검토하느냐로 둘을 나눴다. 둘 다 원문과 기준을 읽어야 하므로 기밀 영역에 둔다.</li>
-    <li><b>대응 에이전트가 실무 에이전트에게 직접 묻지 않는다.</b> head agent를 거치게 그렸다. 팀 규칙의 "외부 채널 담당자는 비서와만 소통한다"를 따랐다.</li>
+    <li><b>head agent가 "걸쳐 있다"는 것.</b> 공개와 기밀의 자료를 모두 읽는다는 뜻으로 읽었다. 에이전트는 샌드박스 하나에만 속할 수 있으므로 기밀 영역에 뒀다.</li>
+    <li><b>검열 에이전트가 "기밀, 비기밀로 있다"는 것.</b> 어디로 나가는 글을 검토하느냐로 둘을 나눴다. 둘 다 기밀 영역에 둔다.</li>
+    <li><b>대응 에이전트가 실무 에이전트에게 직접 묻지 않는다.</b> head agent를 거치게 그렸다.</li>
   </ul>
 </section>
 
 <section>
-  <h2>아직 정하지 않은 것</h2>
+  <h2>정해야 하는 것</h2>
   <ul class="open">
-    <li>업무 셋의 실무 에이전트를 한 샌드박스에 둘지, 업무마다 나눌지. 한 샌드박스 안에서는 서로의 기억을 막을 수 없다.</li>
-    <li>기밀 영역에서 호스트로 답변을 넘기는 방식. 샌드박스는 밖으로 요청을 보낼 수만 있다.</li>
-    <li>head agent가 사용자와 대화할 때의 입구. 기밀 영역에 있으므로 사용자의 대화창이 기밀 영역과 이어져야 한다.</li>
-    <li>기밀 영역의 검열을 누가 구현하는지. 받는 쪽(RFA_module)은 검열된 지식이 온다고 가정하기로 했고, 주는 쪽의 검열 에이전트는 아직 없다.</li>
-    <li>데모용 지식. 지금 stub의 자료에는 미공개 일자와 내부 주소가 일부러 들어 있다. 전제대로라면 걸러진 답변을 돌려줘야 한다.</li>
-    <li>RFA_module PR #12는 공개 쪽 입구와 워크플로를 샌드박스 안에서 돌린다. 공개 영역에 샌드박스를 두지 않는다는 결정과 방향이 다르다.</li>
+    <li>검열 에이전트를 누가 구현하는지. 아직 없다.</li>
+    <li>기밀 검사 화면. 지금의 결재 화면은 게시 직전에 초안을 본다. 기밀 검사는 그보다 앞 단계다.</li>
+    <li>데모용 지식. 지금 stub의 자료에는 미공개 일자와 내부 주소가 일부러 들어 있다.</li>
+    <li>RFA_module PR #12는 공개 쪽 입구와 워크플로를 샌드박스 안에서 돌린다. 샌드박스를 두지 않는다는 결정과 방향이 다르다.</li>
+    <li>실무 에이전트 셋을 한 샌드박스에 둘지, 업무마다 나눌지.</li>
+    <li>head agent가 사용자와 대화할 때의 입구.</li>
   </ul>
 </section>
 
