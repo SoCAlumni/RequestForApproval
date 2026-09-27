@@ -53,6 +53,32 @@ NET:OPEN  DENIED  /usr/bin/curl -> example.com:443 [engine:opa] [reason:endpoint
 - 검증 후 `rfa-host-probe`를 제거했다. 제거 뒤 같은 주소에 curl은 403, python은 200이다.
 - `my-assistant`에 남은 정책: brew, huggingface, npm, openclaw-pricing, pypi, rfa-host-services.
 
-### 5. 남은 확인
+### 5. 승인 출처 검사 확인
 
-- review 서비스의 loopback 가드가 Docker Desktop 환경에서도 유효한지. uvicorn 접근 로그에서 샌드박스 요청의 출처 주소가 `127.0.0.1`로 찍히는지 보면 된다 (policies/README.md "확인이 필요한 것").
+review 서비스는 `127.0.0.1`에서 온 요청만 승인·거절을 받는다. 이 검사가 Docker Desktop 환경에서도 통하는지 확인했다. 없는 문서 번호(`999999`)로 승인을 호출하면 검사에 걸릴 때 `403 loopback_only`, 검사를 통과할 때 `404 not_found`가 나오고 어느 쪽이든 상태는 바뀌지 않는다.
+
+| 보낸 곳 | 주소 | 응답 | 뜻 |
+|---|---|---|---|
+| 호스트 | `127.0.0.1:8790` | 404 `not_found` | 검사 통과 (정상. 사람의 브라우저) |
+| 호스트 | `172.29.134.236:8790` | 403 `loopback_only` | 검사에 걸림 |
+| 컨테이너 (`openshell-docker` 네트워크) | `172.29.134.236:8790` | 403 `loopback_only` | 검사에 걸림 |
+| 컨테이너 (`openshell-docker` 네트워크) | `host.docker.internal:8790` | **404 `not_found`** | **검사 통과. 뚫림** |
+
+🔴 **문제**: `host.docker.internal`로 들어온 요청은 Docker Desktop이 대신 전달해서 호스트에서 `127.0.0.1` 출처로 보인다. 출처 주소만 보는 검사는 컨테이너에서 온 요청을 사람의 요청과 구분하지 못한다.
+
+🟢 **현재 방어**: 샌드박스 안에서는 이 경로가 네트워크 정책에 막힌다. 허용된 프로그램(python)으로 보내도 같다.
+
+```
+DENIED /usr/bin/python3.13 -> POST http://host.docker.internal:8790/reviews/999999/approve   [reason:endpoint host.docker.internal:8790 is not allowed by any policy]
+DENIED /usr/bin/python3.13 -> POST http://host.openshell.internal:8790/reviews/999999/approve [reason:endpoint host.openshell.internal:8790 is not allowed by any policy]
+DENIED /usr/bin/python3.13 -> POST http://172.29.134.236:8790/reviews/999999/approve          [reason:... blocked by deny rule]
+```
+
+결론:
+
+- 샌드박스에서 승인에 닿는 경로는 세 가지 모두 막혀 있다. 지금 상태는 안전하다.
+- 다만 막고 있는 것은 네트워크 정책 하나다. review 서비스의 출처 검사는 이 환경에서 두 번째 방어선 역할을 하지 못한다.
+- 누군가 정책에 `host.docker.internal:8790` 또는 `host.openshell.internal:8790`을 허용으로 추가하면 승인까지 열린다. 호스트 서비스 주소는 반드시 IP로 적고, 이 두 이름은 정책에 넣지 않는다.
+- 샌드박스가 아닌 일반 컨테이너는 정책을 받지 않으므로 이 PC에서 도는 다른 컨테이너는 승인을 호출할 수 있다.
+
+🟢 **권장 (RFA_module)**: 출처 주소 대신 비밀값으로 확인한다. 서비스 시작 때 승인용 토큰을 만들어 터미널에 보여 주고, 결재 웹이 승인·거절 요청에 그 토큰을 실어 보내게 한다. 토큰은 호스트에만 있으므로 어느 경로로 들어오든 샌드박스는 맞출 수 없다.

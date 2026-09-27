@@ -1,0 +1,70 @@
+# 샌드박스 `team` 전용 에이전트 명단. 샌드박스 하나당 파일 하나를 둔다.
+#   NEMOCLAW_GATEWAY_PORT=8090 nemoclaw onboard --name team --agents agents/team.yaml --no-gpu --control-ui-port 18791
+#
+# 기밀 등급: 업무 내부. 업무 원자료와 기밀 기준을 읽는 에이전트가 여기서 돈다.
+# 추론은 로컬 Ollama 만 쓴다. 이 샌드박스의 gateway 에는 외부 제공자의 키를 등록하지 않는다.
+#
+# 초안이다. 아직 샌드박스에 구워 보지 않았다.
+# MCP 도구 이름이 정해지지 않아서 지금은 파일 읽기만 허용한다.
+# 도구가 정해지면 <MCP 서버 이름>__<도구 이름> 형식으로 하나씩 allow 에 적는다.
+#
+# 한 샌드박스 안의 에이전트들은 파일시스템과 네트워크 정책을 공유한다.
+# 여기서 나누는 것은 역할이지 보안 경계가 아니다.
+#
+# 최상위 키는 agents, defaults, main 만 허용된다. workspace 와 model 은 적지 않는다.
+
+defaults:
+  subagents:
+    maxSpawnDepth: 1
+
+# 비서. 사용자와 대화하고, 업무 에이전트에게 묻고, 기밀 검토를 거친 답만 밖으로 넘긴다.
+main:
+  tools:
+    profile: minimal
+    allow:
+      - read
+    deny:
+      - group:runtime    # exec, process, code_execution
+      - group:web
+      - group:ui
+      - group:messaging
+      - group:automation
+      - group:plugins    # MCP 도구 포함. 도구가 정해지면 필요한 것만 allow 로 옮긴다
+  subagents:
+    allowAgents:
+      - task-orbit
+      - censor-public
+    requireAgentId: true
+
+agents:
+  # 업무 에이전트. ORBIT 벤치마크의 원자료와 기억을 읽고 답한다.
+  # 업무가 늘면 task-<업무> 를 추가한다. 서로의 기억을 보면 안 되는 업무는 샌드박스를 나눈다.
+  - id: task-orbit
+    description: "ORBIT 벤치마크 업무 담당. 업무 노트를 근거로 답변 작성"
+    tools:
+      allow:
+        - read
+      deny:
+        - group:runtime
+        - group:web
+        - group:ui
+        - group:sessions
+        - group:messaging
+        - group:automation
+        - group:plugins
+
+  # 기밀 검토 (공개 범위). 공개 등급으로 나가는 답변에서 기밀을 걸러 낸다.
+  # 대외적 기밀 기준과 개인적 비공개 기준을 모두 적용한다. 기준 문서 자체가 기밀이다.
+  - id: censor-public
+    description: "공개 범위 기밀 검토. 공개 등급으로 넘어가는 내용을 검토"
+    tools:
+      allow:
+        - read
+      deny:
+        - group:runtime
+        - group:web
+        - group:ui
+        - group:sessions
+        - group:messaging
+        - group:automation
+        - group:plugins

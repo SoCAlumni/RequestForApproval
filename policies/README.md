@@ -1,4 +1,4 @@
-# policies — 샌드박스 `rfa` 네트워크 정책
+# policies — 샌드박스 `public` 네트워크 정책
 
 작성일: 2026-09-27. NemoClaw v0.0.129 기준. 근거는 RFA_module `docs/architecture.md` 4장 "Tool call 정책표".
 
@@ -10,7 +10,7 @@
 | `rfa-host-probe.yaml` | 검증 전용. 확인이 끝나면 제거 | curl |
 | `.rendered/` | 호스트 IP가 채워진 생성물 (gitignore) | — |
 
-github MCP(8792)는 `nemoclaw rfa mcp add`가 정책을 직접 만들기 때문에 여기 없다. `inference.local`은 기본 정책에 들어 있다.
+github MCP(8792)는 `nemoclaw public mcp add`가 정책을 직접 만들기 때문에 여기 없다. `inference.local`은 기본 정책에 들어 있다.
 
 ## 정책표 대응
 
@@ -28,16 +28,16 @@ github MCP(8792)는 `nemoclaw rfa mcp add`가 정책을 직접 만들기 때문�
 
 ```bash
 # 1. 미리보기: 생성되는 allowed_ips 와 허용 범위를 확인
-RFA_HOST_IP=<호스트 IP> ./scripts/apply_policies.sh rfa
+RFA_HOST_IP=<호스트 IP> ./scripts/apply_policies.sh public
 
 # 2. 적용 (검증용 curl 정책 포함)
-RFA_HOST_IP=<호스트 IP> ./scripts/apply_policies.sh rfa --apply --with-probe
+RFA_HOST_IP=<호스트 IP> ./scripts/apply_policies.sh public --apply --with-probe
 
 # 3. 검증: 읽기는 통과, 결재와 외부 전송은 차단
-RFA_HOST_IP=<호스트 IP> ./scripts/verify_policy.sh rfa
+RFA_HOST_IP=<호스트 IP> ./scripts/verify_policy.sh public
 
 # 4. 검증용 정책 제거
-nemoclaw rfa policy remove rfa-host-probe --yes
+nemoclaw public policy remove rfa-host-probe --yes
 ```
 
 ## RFA_module `docs/setup.md`와 다른 점
@@ -53,4 +53,8 @@ nemoclaw rfa policy remove rfa-host-probe --yes
 
 - **`RFA_HOST_IP` 값.** 이 PC에서는 WSL `eth0` 주소(`172.29.134.236`)로 확인했다. WSL 재시작 시 바뀔 수 있다.
 - **바이너리 경로.** 시스템 python은 `/usr/bin/python3.13`으로 확인했다. 워크플로를 venv에 설치하면 실제 실행 경로가 다를 수 있다. 막히면 프록시 로그의 DENIED 줄에 찍힌 경로로 `binaries`를 고친다.
-- **loopback 가드.** review 서비스는 `127.0.0.1` 출처만 결재를 허용한다. Docker Desktop은 컨테이너→호스트 트래픽을 대신 전달하므로, 샌드박스 요청이 호스트에서 loopback 출처로 보일 가능성이 있다(샌드박스 로그에서 `127.0.0.1:8080`에만 바인딩된 게이트웨이에 `host.openshell.internal:8080`으로 접속 성공). 사실이라면 앱의 loopback 검사는 방어가 되지 못하고, 이 정책의 `deny_rules`가 유일한 차단선이다. `verify_policy.sh`의 "결재 승인 호출"이 정책 없이도 막히는지 따로 확인할 것.
+
+## 정책을 고칠 때 지킬 것
+
+- **호스트 서비스 주소는 IP로만 적는다.** `host.docker.internal`, `host.openshell.internal`은 정책에 넣지 않는다. 이 이름으로 들어온 요청은 호스트에서 `127.0.0.1` 출처로 보여서 review 서비스의 승인 출처 검사를 통과한다 (확인함. [검증 기록 5절](../docs/nemoclaw/03-policy-verification.md)).
+- **승인·거절 경로의 `deny_rules`를 지우지 않는다.** 이 환경에서 샌드박스의 승인 호출을 막는 것은 네트워크 정책 하나다.

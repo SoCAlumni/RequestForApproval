@@ -13,8 +13,8 @@ modules:
     path_env: RFA_MODULE_DIR
     default_path: ~/git/RFA_module
     api_docs: https://socalumni.github.io/RFA_module/
-    sandbox: rfa
-    agents: agents/rfa.yaml
+    sandbox: public
+    agents: agents/public.yaml
     policies:
       - policies/rfa-host-services.yaml
     services:
