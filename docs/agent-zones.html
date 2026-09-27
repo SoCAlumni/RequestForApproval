@@ -136,8 +136,9 @@
 
     <!-- 호스트: API, 목록 -->
     <rect class="bx" x="475" y="110" width="110" height="70" rx="6"/>
-    <text class="t" x="530" y="141" text-anchor="middle">API</text>
-    <text class="s" x="530" y="162" text-anchor="middle">유일한 통로</text>
+    <text class="t" x="530" y="134" text-anchor="middle">API</text>
+    <text class="s" x="530" y="153" text-anchor="middle">검열 표시 확인</text>
+    <text class="s" x="530" y="170" text-anchor="middle">코드 검사</text>
     <text class="s" x="530" y="222" text-anchor="middle">영역끼리</text>
     <text class="s" x="530" y="240" text-anchor="middle">직접 통신 없음</text>
     <rect class="list" x="475" y="300" width="110" height="70" rx="6"/>
@@ -272,13 +273,28 @@
   <table>
     <thead><tr><th>조건</th><th>이유</th><th>지금 상태</th></tr></thead>
     <tbody>
-      <tr><td>공개 영역에 기밀이 들어오지 않는다</td><td>샌드박스가 없으면 나가는 길을 막을 수 없다. 빼낼 것이 없어야 한다</td><td>아직 아님. 지금은 걸러지기 전의 답변이 들어온다</td></tr>
+      <tr><td>공개 영역에 기밀이 들어오지 않는다</td><td>샌드박스가 없으면 나가는 길을 막을 수 없다. 빼낼 것이 없어야 한다</td><td><b>전제로 둔다.</b> 기밀 영역에서 나오는 것은 이미 한 번 검열된 것으로 본다</td></tr>
       <tr><td>대응 에이전트에게 도구를 주지 않는다</td><td>모델이 글만 쓰고, 어디를 부를지는 코드가 정한다. 모델이 속아도 할 수 있는 일이 없다</td><td>RFA_module의 고정 워크플로가 이 모양이다</td></tr>
       <tr><td>승인을 출처 주소로 확인하지 않는다</td><td>호스트에서 도는 프로그램은 모두 <code>127.0.0.1</code>에서 온 것으로 보인다</td><td>아직 아님. 승인용 토큰이 필요하다</td></tr>
       <tr><td>게시 토큰과 승인용 토큰을 공개 영역의 프로세스가 읽지 못한다</td><td>같은 호스트에서 돌기 때문에 환경변수와 파일을 나눠야 한다</td><td>확인하지 않음</td></tr>
     </tbody>
   </table>
   </div>
+</section>
+
+<section>
+  <h2>전제: 기밀 영역에서 나온 것은 이미 검열되어 있다</h2>
+  <p>공개 영역의 안전은 이 전제에 달려 있다. 전제가 깨졌을 때 드러나도록 두 가지를 둔다.</p>
+  <div class="tablewrap" style="margin-top:14px">
+  <table>
+    <thead><tr><th>장치</th><th>하는 일</th><th>두는 곳</th></tr></thead>
+    <tbody>
+      <tr><td>검열 표시</td><td>기밀 영역에서 나오는 답변에 "검열을 거쳤다"는 표시와 기준 버전, 독자 등급을 붙인다. 표시가 없는 답변은 공개 영역이 받지 않는다</td><td>호스트의 API</td></tr>
+      <tr><td>경계의 코드 검사</td><td>답변이 API를 지날 때 비밀값과 금칙어를 한 번 더 본다. 검열 에이전트가 놓친 것을 공개 영역에 닿기 전에 잡는다</td><td>호스트의 API</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="margin-top:12px" class="lede">경계에서 검사하는 이유: 대응 에이전트가 초안을 쓸 때 받은 답변이 외부 추론 제공자에게 간다. 사람의 결재는 그 뒤에 있으므로, 결재에서 걸러도 제공자에게는 이미 나간 뒤다.</p>
 </section>
 
 <section>
@@ -296,7 +312,7 @@
     <li>업무 셋의 실무 에이전트를 한 샌드박스에 둘지, 업무마다 나눌지. 한 샌드박스 안에서는 서로의 기억을 막을 수 없다.</li>
     <li>기밀 영역에서 호스트로 답변을 넘기는 방식. 샌드박스는 밖으로 요청을 보낼 수만 있다.</li>
     <li>head agent가 사용자와 대화할 때의 입구. 기밀 영역에 있으므로 사용자의 대화창이 기밀 영역과 이어져야 한다.</li>
-    <li>지금 구현에서는 검열이 공개 쪽 워크플로 안에서 돈다. 이 그림대로 가려면 옮겨야 한다.</li>
+    <li>지금 구현에서는 검열이 공개 쪽 워크플로 안에서 돌고, 걸러지기 전의 답변이 공개 쪽으로 들어온다. 전제와 구현을 맞추려면 검열을 기밀 영역으로 옮겨야 한다.</li>
   </ul>
 </section>
 
