@@ -7,16 +7,16 @@
 modules:
   rfa-module:
     owner: 윤승희
-    role: 외부게시 MCP Agent. 초안, 기밀검토, 사람 결재, 외부 채널 게시
+    role: 대응 에이전트(LangGraph 워크플로)와 호스트 서비스. 다듬기, 사람 결재, 외부 채널 게시
     repo: https://github.com/SoCAlumni/RFA_module.git
-    ref: a243c37            # main, Step 7 (2026-09-27)
+    ref: a243c37            # main, Step 7 (2026-09-27). 네트워크 정책을 검증한 커밋. main 은 Step 9 까지 왔다
     path_env: RFA_MODULE_DIR
     default_path: ~/git/RFA_module
     api_docs: https://socalumni.github.io/RFA_module/
-    sandbox: public
-    agents: agents/public.yaml
-    policies:
-      - policies/rfa-host-services.yaml
+    zone: public            # 공개 영역. 샌드박스 없이 호스트에서 돈다 (architecture-decisions.md D15, D17)
+    sandbox: null
+    agents: null
+    policies: []
     services:
       review:
         port: 8790
@@ -30,4 +30,4 @@ modules:
       github-mcp:
         port: 8792
         run: uv run uvicorn --factory mcp_channels.server:create_app --port 8792
-        note: 샌드박스에 등록하려면 HTTPS 필요. 아직 안 띄움
+        note: 샌드박스 안의 에이전트가 채널을 읽을 때 쓰던 것. 대응 에이전트가 호스트에서 돌면 필요 없다

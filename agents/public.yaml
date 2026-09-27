@@ -1,3 +1,7 @@
+# 쓰지 않는다 (2026-09-27). 공개 영역에는 샌드박스를 두지 않기로 했다.
+# 대응 에이전트는 샌드박스 없이 호스트에서 돈다 (docs/architecture-decisions.md D15, D17).
+# NemoClaw 검증기를 통과한 명단의 예로 남겨 둔다.
+#
 # 샌드박스 `public` 전용 에이전트 명단. 샌드박스 하나당 파일 하나를 둔다.
 #   nemoclaw onboard --name public --agents agents/public.yaml --no-gpu
 #

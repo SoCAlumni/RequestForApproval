@@ -1,0 +1,230 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RFA 기밀 검토 흐름</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg: #f2f4f3; --panel: #ffffff; --sb: #e9eeec; --zone: #e2e6ea;
+    --ink: #17211e; --muted: #5a6763; --line: #c6cfcb;
+    --allow: #1b7a4b; --allow-bg: #dff1e7;
+    --deny: #b3261e; --deny-bg: #f9e1df;
+    --plan: #8a5a00; --plan-bg: #f6ead0;
+    --sans: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+    --mono: "IBM Plex Mono", "D2Coding", ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #101513; --panel: #1a211e; --sb: #151c19; --zone: #1b2027;
+      --ink: #e5ebe8; --muted: #95a39e; --line: #35423d;
+      --allow: #62cc93; --allow-bg: #173826;
+      --deny: #ff8478; --deny-bg: #43201d;
+      --plan: #e5b455; --plan-bg: #3b2f14;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #101513; --panel: #1a211e; --sb: #151c19; --zone: #1b2027;
+    --ink: #e5ebe8; --muted: #95a39e; --line: #35423d;
+    --allow: #62cc93; --allow-bg: #173826;
+    --deny: #ff8478; --deny-bg: #43201d;
+    --plan: #e5b455; --plan-bg: #3b2f14;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 15px/1.65 var(--sans);
+    padding-inline: 20px; padding-block: 36px 72px;
+  }
+  .page { max-width: 1120px; margin-inline: auto; display: flex; flex-direction: column; gap: 36px; }
+  header { display: flex; flex-direction: column; gap: 10px; }
+  .eyebrow { font: 600 12px/1 var(--mono); letter-spacing: .08em; color: var(--muted); text-transform: uppercase; }
+  h1 { margin: 0; font-size: 30px; line-height: 1.25; font-weight: 700; text-wrap: balance; }
+  h2 { margin: 0 0 14px; font-size: 19px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
+  p { margin: 0; max-width: 68ch; }
+  .lede { color: var(--muted); }
+  code { font: 13px var(--mono); background: var(--sb); padding: 1px 5px; border-radius: 4px; }
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  .scroll svg { display: block; width: 100%; min-width: 960px; height: auto; font-family: var(--sans); }
+  figcaption { color: var(--muted); font-size: 14px; max-width: 78ch; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; color: var(--muted); padding: 0; margin: 0; list-style: none; }
+  .legend li { display: flex; align-items: center; gap: 8px; }
+  .legend svg { width: 38px; height: 12px; flex: none; }
+
+  .grp     { fill: var(--sb); stroke: var(--ink); stroke-width: 1.6; }
+  .zone    { fill: var(--zone); stroke: var(--line); stroke-width: 1; }
+  .bx      { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
+  .list    { fill: var(--plan-bg); stroke: var(--plan); stroke-width: 1.4; }
+  .edge    { stroke: var(--muted); stroke-width: 1.4; stroke-dasharray: 5 5; fill: none; }
+  .t       { fill: var(--ink); font-size: 14px; font-weight: 600; }
+  .s       { fill: var(--muted); font-size: 12px; }
+  .a       { fill: none; stroke-width: 1.8; }
+  .a-allow { stroke: var(--allow); }
+  .a-deny  { stroke: var(--deny); }
+  .a-ink   { stroke: var(--ink); }
+  .a-plan  { stroke: var(--plan); }
+  .h-allow { fill: var(--allow); }
+  .h-ink   { fill: var(--ink); }
+  .h-plan  { fill: var(--plan); }
+  .l       { font-size: 12px; font-weight: 600; }
+  .l-allow { fill: var(--allow); }
+  .l-deny  { fill: var(--deny); }
+  .l-plan  { fill: var(--plan); }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+  table { border-collapse: collapse; width: 100%; min-width: 700px; font-size: 14px; line-height: 1.5; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; color: var(--muted); font-weight: 600; letter-spacing: .02em; }
+  tr:last-child td { border-bottom: 0; }
+  td b { font-weight: 600; }
+  ol.rules { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; max-width: 78ch; }
+  footer { color: var(--muted); font-size: 13px; }
+</style>
+
+<div class="page">
+
+<header>
+  <span class="eyebrow">RequestForApproval · 2026-09-27</span>
+  <h1>RFA 기밀 검토 흐름</h1>
+  <p class="lede">기밀에 대한 판단은 기밀 영역을 떠나기 전에 끝낸다. 코드와 검열 에이전트가 먼저 거르고, 사람이 꼼꼼히 검사한다. 경계를 넘은 뒤에는 다듬기와 게시만 남는다. 사람의 결정은 목록으로 쌓여 다음 검사에 쓰인다.</p>
+</header>
+
+<figure>
+  <div class="scroll">
+  <svg viewBox="0 0 1100 430" role="img" aria-label="답변 원문은 코드 검사와 검열 에이전트를 거쳐 사람의 검사를 받는다. 사람이 승인한 지식만 경계를 넘어 대응 에이전트에게 가고, 대응 에이전트는 다듬기만 한 뒤 게시된다. 사람의 결정은 허용 차단 목록에 추가되고, 코드 검사와 검열 에이전트가 그 목록을 읽는다. 경로는 모든 단계의 바닥에 있다.">
+    <defs>
+      <marker id="h-allow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-allow"/></marker>
+      <marker id="h-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-ink"/></marker>
+      <marker id="h-plan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-plan"/></marker>
+    </defs>
+
+    <!-- 허용·차단 목록 -->
+    <rect class="list" x="220" y="28" width="420" height="72" rx="8"/>
+    <text class="t" x="430" y="60" text-anchor="middle">허용 · 차단 목록</text>
+    <text class="s" x="430" y="82" text-anchor="middle">결정할 때마다 쌓임 · 에이전트는 읽기만</text>
+
+    <line class="a a-plan" x1="273" y1="100" x2="273" y2="177" marker-end="url(#h-plan)"/>
+    <text class="l l-plan" x="281" y="126">읽음</text>
+    <line class="a a-plan" x1="475" y1="100" x2="475" y2="177" marker-end="url(#h-plan)"/>
+    <text class="l l-plan" x="483" y="126">읽음</text>
+    <polyline class="a a-plan" points="700,140 700,64 641,64" marker-end="url(#h-plan)"/>
+    <text class="l l-plan" x="708" y="108">결정을 추가</text>
+
+    <!-- 원문 -->
+    <rect class="bx" x="30" y="178" width="100" height="80" rx="6"/>
+    <text class="t" x="80" y="212" text-anchor="middle">답변 원문</text>
+    <text class="s" x="80" y="234" text-anchor="middle">실무 에이전트</text>
+
+    <!-- 2. 내용 -->
+    <rect class="grp" x="165" y="140" width="410" height="135" rx="10"/>
+    <text class="t" x="181" y="164">2. 내용</text>
+    <text class="s" x="559" y="164" text-anchor="end">무엇이 나가는가</text>
+    <rect class="bx" x="181" y="178" width="184" height="80" rx="6"/>
+    <text class="t" x="273" y="212" text-anchor="middle">코드 검사</text>
+    <text class="s" x="273" y="234" text-anchor="middle">비밀값 · 금칙어 · 출처 등급</text>
+    <rect class="bx" x="391" y="178" width="168" height="80" rx="6"/>
+    <text class="t" x="475" y="212" text-anchor="middle">검열 에이전트</text>
+    <text class="s" x="475" y="234" text-anchor="middle">맥락 판정, 걸러낸 안</text>
+
+    <!-- 3. 결재 -->
+    <rect class="grp" x="610" y="140" width="180" height="135" rx="10"/>
+    <text class="t" x="626" y="164">3. 결재</text>
+    <text class="s" x="774" y="164" text-anchor="end">누가 정하는가</text>
+    <rect class="bx" x="626" y="178" width="148" height="80" rx="6"/>
+    <text class="t" x="700" y="212" text-anchor="middle">사람</text>
+    <text class="s" x="700" y="234" text-anchor="middle">꼼꼼히 검사</text>
+
+    <!-- 경계 -->
+    <line class="edge" x1="815" y1="120" x2="815" y2="310"/>
+    <text class="s" x="815" y="112" text-anchor="middle">경계</text>
+
+    <!-- 대응, 게시 -->
+    <rect class="bx" x="840" y="178" width="120" height="80" rx="6"/>
+    <text class="t" x="900" y="212" text-anchor="middle">대응 에이전트</text>
+    <text class="s" x="900" y="234" text-anchor="middle">다듬기만</text>
+    <rect class="bx" x="1000" y="178" width="80" height="80" rx="6"/>
+    <text class="t" x="1040" y="212" text-anchor="middle">게시</text>
+    <text class="s" x="1040" y="234" text-anchor="middle">밖으로</text>
+
+    <!-- 흐름 -->
+    <line class="a a-ink" x1="130" y1="218" x2="180" y2="218" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="365" y1="218" x2="390" y2="218" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="559" y1="218" x2="625" y2="218" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="774" y1="218" x2="839" y2="218" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="960" y1="218" x2="999" y2="218" marker-end="url(#h-ink)"/>
+
+    <text class="s" x="370" y="298" text-anchor="middle">집행: 코드 + 검열 에이전트</text>
+    <text class="s" x="700" y="298" text-anchor="middle">집행: 기밀 검사 화면</text>
+    <text class="s" x="820" y="328" text-anchor="start">승인된 지식만 넘어감</text>
+
+    <!-- 1. 경로 -->
+    <rect class="zone" x="30" y="340" width="1050" height="72" rx="10"/>
+    <text class="t" x="50" y="371">1. 경로</text>
+    <text class="s" x="50" y="393">어디로 나가는가 · 모든 단계의 바닥</text>
+    <text class="s" x="1060" y="371" text-anchor="end">기밀 영역: 샌드박스 프록시가 집행</text>
+    <text class="s" x="1060" y="393" text-anchor="end">공개 영역: 코드가 정한 길만</text>
+
+    <line class="a a-deny" x1="80" y1="258" x2="80" y2="304"/>
+    <line class="a a-deny" x1="74" y1="304" x2="86" y2="316"/><line class="a a-deny" x1="86" y1="304" x2="74" y2="316"/>
+    <text class="l l-deny" x="94" y="314">다른 길은 차단</text>
+
+    <line class="a a-allow" x1="1040" y1="258" x2="1040" y2="339" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="1032" y="298" text-anchor="end">허용된 곳만</text>
+  </svg>
+  </div>
+  <ul class="legend">
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-ink" x1="1" y1="6" x2="36" y2="6"/></svg>글이 지나가는 순서</li>
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-plan" x1="1" y1="6" x2="36" y2="6"/></svg>목록을 읽거나 목록에 추가</li>
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="edge" x1="1" y1="6" x2="36" y2="6"/></svg>기밀 영역과 공개 영역의 경계</li>
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-deny" x1="1" y1="6" x2="24" y2="6"/><line class="a a-deny" x1="27" y1="1" x2="37" y2="11"/><line class="a a-deny" x1="37" y1="1" x2="27" y2="11"/></svg>차단</li>
+  </ul>
+  <figcaption>경계의 왼쪽에서 기밀 판단이 끝난다. 목록에 쓸 수 있는 것은 사람뿐이다. 검열 에이전트가 자기 기준을 고칠 수 있으면 속임수 한 번에 기준이 풀린다.</figcaption>
+</figure>
+
+<section>
+  <h2>세 가지의 차이</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>1. 경로</th><th>2. 내용</th><th>3. 결재</th></tr></thead>
+    <tbody>
+      <tr><td>보는 것</td><td>주소, 목적지, 도구, 추론 제공자</td><td>단어, 값, 문장, 출처</td><td>원문, 걸러낸 안, 걸린 사유</td></tr>
+      <tr><td>집행하는 곳</td><td>기밀 영역은 샌드박스 프록시와 게이트웨이. 공개 영역은 샌드박스가 없고 코드가 부르는 곳이 정해져 있음</td><td>코드 검사, 검열 에이전트</td><td>기밀 검사 화면의 사람</td></tr>
+      <tr><td>도는 곳</td><td>모든 단계</td><td>기밀 영역 안</td><td>경계를 넘기 직전</td></tr>
+      <tr><td>목록이 바뀌는 빈도</td><td>드묾</td><td><b>검사할 때마다</b></td><td>—</td></tr>
+      <tr><td>바꾸는 사람</td><td>관리자</td><td>검사하는 사람, 개인</td><td>—</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>결정이 목록으로 쌓이는 방식</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>기밀 검사에서의 결정</th><th>생기는 항목</th><th>적용</th></tr></thead>
+    <tbody>
+      <tr><td>거절</td><td>차단 항목</td><td>바로</td></tr>
+      <tr><td>고쳐서 승인</td><td>차단 항목과 대체 표현</td><td>바로</td></tr>
+      <tr><td>승인</td><td>허용 항목</td><td>담당자가 확인한 뒤. 같은 문장, 같은 독자에게만</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>목록이 부딪힐 때</h2>
+  <ol class="rules">
+    <li>차단이 허용을 이긴다.</li>
+    <li>비밀값 패턴의 차단은 어떤 허용으로도 풀리지 않는다.</li>
+    <li>공식 기준이 개인 기준보다 앞선다. 개인 기준으로 더 조이는 것은 언제나 가능하다.</li>
+    <li>허용은 보류를 통과로 바꿀 수 있을 뿐, 차단을 바꾸지 못한다.</li>
+  </ol>
+</section>
+
+<footer>자세한 내용: <code>docs/review-methodology.md</code>, 에이전트 배치는 <code>docs/agent-zones.html</code>. 검열 에이전트, 금칙어와 출처 등급 검사, 결정을 목록으로 올리는 단계는 아직 구현되지 않았다.</footer>
+
+</div>

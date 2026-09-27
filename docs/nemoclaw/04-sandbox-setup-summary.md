@@ -2,7 +2,7 @@
 
 > 이 가이드는 승희 님의 외부게시 모듈(RFA_module)을 NemoClaw 샌드박스에 올리기 위한 네트워크 정책과 에이전트 권한 설정을 설명합니다. 2026-09-27 작업을 정리했으며, 확인한 것과 확인하지 못한 것을 구분해 적었습니다.
 
-> ⚠️ 이 문서는 샌드박스 이름을 바꾸기 전에 썼습니다. 본문의 `rfa`는 지금의 `public`이고, `agents/rfa.yaml`은 `agents/public.yaml`입니다. 이름과 배치의 기준은 [../architecture-decisions.md](../architecture-decisions.md)입니다.
+> ⚠️ 이 문서는 구조를 바꾸기 전에 썼습니다. 공개 쪽의 에이전트를 샌드박스(`rfa`, 뒤에 `public`)에 넣는 것을 전제로 합니다. 2026-09-27 오후에 샌드박스는 기밀 영역(`team`)에만 두기로 했습니다. 정책을 쓰고 검증하는 방법, NemoClaw가 받지 않는 설정(7절)은 그대로 쓸 수 있습니다. 지금 구조는 [../architecture-decisions.md](../architecture-decisions.md) 15절, 계획은 [../milestone.md](../milestone.md)입니다.
 
 제출 마감은 2026-09-28 23:59입니다. 그림은 [sandbox-layout.html](../sandbox-layout.html), 검증 로그는 [03-policy-verification.md](03-policy-verification.md)에 있습니다.
 

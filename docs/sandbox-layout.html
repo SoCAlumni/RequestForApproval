@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
 <style>
   :root {
-    --bg: #f2f4f3; --panel: #ffffff; --sb: #e9eeec; --zone: #e2e6ea; --gw: #f7f8f7;
+    --bg: #f2f4f3; --panel: #ffffff; --sb: #e7e3f1; --zone: #e2e6ea;
     --ink: #17211e; --muted: #5a6763; --line: #c6cfcb;
     --allow: #1b7a4b; --allow-bg: #dff1e7;
     --deny: #b3261e; --deny-bg: #f9e1df;
@@ -15,7 +15,7 @@
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
       color-scheme: dark;
-      --bg: #101513; --panel: #1a211e; --sb: #151c19; --zone: #1b2027; --gw: #131917;
+      --bg: #101513; --panel: #1a211e; --sb: #211d30; --zone: #1b2027;
       --ink: #e5ebe8; --muted: #95a39e; --line: #35423d;
       --allow: #62cc93; --allow-bg: #173826;
       --deny: #ff8478; --deny-bg: #43201d;
@@ -24,7 +24,7 @@
   }
   :root[data-theme="dark"] {
     color-scheme: dark;
-    --bg: #101513; --panel: #1a211e; --sb: #151c19; --zone: #1b2027; --gw: #131917;
+    --bg: #101513; --panel: #1a211e; --sb: #211d30; --zone: #1b2027;
     --ink: #e5ebe8; --muted: #95a39e; --line: #35423d;
     --allow: #62cc93; --allow-bg: #173826;
     --deny: #ff8478; --deny-bg: #43201d;
@@ -44,7 +44,7 @@
   h2 { margin: 0 0 14px; font-size: 19px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
   p { margin: 0; max-width: 68ch; }
   .lede { color: var(--muted); }
-  code { font: 13px var(--mono); background: var(--sb); padding: 1px 5px; border-radius: 4px; }
+  code { font: 13px var(--mono); background: var(--zone); padding: 1px 5px; border-radius: 4px; }
 
   figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
   .scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
@@ -55,12 +55,9 @@
   .legend li { display: flex; align-items: center; gap: 8px; }
   .legend svg { width: 38px; height: 12px; flex: none; }
 
-  /* 그림 */
-  .gw      { fill: var(--gw); stroke: var(--line); stroke-width: 1; }
   .sb      { fill: var(--sb); stroke: var(--ink); stroke-width: 1.6; }
   .zone    { fill: var(--zone); stroke: var(--line); stroke-width: 1; }
   .bx      { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
-  .proxy   { fill: var(--panel); stroke: var(--ink); stroke-width: 1.2; }
   .plan    { stroke-dasharray: 6 4; }
   .t       { fill: var(--ink); font-size: 13px; font-weight: 600; }
   .tm      { fill: var(--ink); font: 600 13px var(--mono); }
@@ -76,7 +73,6 @@
   .l-deny  { fill: var(--deny); }
   .l-ink   { fill: var(--ink); }
 
-  /* 카드 */
   .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
   .card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -105,13 +101,13 @@
 <header>
   <span class="eyebrow">RequestForApproval · 2026-09-27 · 해커톤 시연 구성</span>
   <h1>RFA 샌드박스 배치</h1>
-  <p class="lede">샌드박스는 기밀 등급마다 하나씩 두고 이름도 등급을 따른다. 샌드박스끼리는 직접 말하지 않고 호스트 서비스의 API로만 주고받는다. 승인과 게시는 호스트에만 있다.</p>
-  <p class="lede">해커톤 시연에서는 모든 샌드박스가 외부 API로 추론한다. 그래서 시연에는 합성 자료만 넣는다. 점선으로 그린 것은 아직 없다.</p>
+  <p class="lede">샌드박스는 기밀 영역에만 둔다. 기밀을 읽는 에이전트는 샌드박스 <code>team</code> 안에서 돌고, 허용된 호스트 주소 말고는 밖으로 나갈 수 없다. 공개 쪽의 대응 에이전트는 샌드박스 없이 호스트에서 돈다.</p>
+  <p class="lede">이 그림은 무엇이 어디서 도는지를 보여준다. 에이전트 사이의 흐름은 <code>agent-zones.html</code>에 있다. 점선으로 그린 것은 아직 없다.</p>
 </header>
 
 <figure>
   <div class="scroll">
-  <svg viewBox="0 0 1100 780" role="img" aria-label="public 과 team 두 샌드박스가 같은 gateway 를 거쳐 외부 제공자로 추론한다. 두 샌드박스는 서로 직접 통신하지 않고 호스트 서비스로만 나간다. public 에서 승인과 거절, 그 밖의 주소는 프록시에서 차단되고, 승인은 사람이, 게시는 호스트의 review 가 한다.">
+  <svg viewBox="0 0 1100 780" role="img" aria-label="샌드박스 team 안에 head agent, 실무 에이전트 셋, 검열 에이전트가 있고 모두 프록시를 거쳐서만 밖으로 나간다. 추론은 게이트웨이를 거쳐 외부 제공자로 간다. team 은 호스트의 review 서비스에 검열 결과를 올릴 수 있고, 승인과 거절, 그 밖의 주소는 프록시에서 차단된다. 호스트에는 review, knowledge, 대응 에이전트가 있다. 사람이 기밀 검사를 하고 호스트가 게시한다.">
     <defs>
       <marker id="h-allow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-allow"/></marker>
       <marker id="h-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="h-ink"/></marker>
@@ -126,54 +122,36 @@
     <line class="a a-ink" x1="870" y1="47" x2="929" y2="47" marker-end="url(#h-ink)"/>
     <text class="l l-ink" x="900" y="90" text-anchor="middle">키를 붙여 외부로</text>
 
-    <!-- 샌드박스: public -->
-    <rect class="sb plan" x="40" y="110" width="460" height="240" rx="10"/>
-    <text class="tm" x="56" y="137">public</text>
-    <text class="s" x="484" y="137" text-anchor="end">공개 등급</text>
-    <line class="a a-allow" x1="120" y1="110" x2="120" y2="70" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="128" y="95">추론</text>
-    <rect class="bx" x="55" y="152" width="95" height="66" rx="6"/>
-    <text class="tm" x="102" y="180" text-anchor="middle">main</text>
-    <text class="s" x="102" y="200" text-anchor="middle">도구 전부 거부</text>
-    <rect class="bx" x="175" y="152" width="145" height="66" rx="6"/>
-    <text class="t" x="247" y="180" text-anchor="middle">워크플로</text>
-    <text class="s" x="247" y="200" text-anchor="middle">작성, 편집 · python</text>
-    <rect class="bx" x="365" y="152" width="120" height="66" rx="6"/>
-    <text class="tm" x="425" y="180" text-anchor="middle">public-desk</text>
-    <text class="s" x="425" y="200" text-anchor="middle">읽기 도구 3개</text>
-    <line class="a a-ink" x1="365" y1="185" x2="322" y2="185" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="343" y="177" text-anchor="middle">실행</text>
-    <line class="a a-ink" x1="247" y1="218" x2="247" y2="274" marker-end="url(#h-ink)"/>
-    <line class="a a-ink" x1="425" y1="218" x2="425" y2="274" marker-end="url(#h-ink)"/>
-    <rect class="proxy" x="55" y="275" width="430" height="40" rx="6"/>
-    <text class="t" x="270" y="300" text-anchor="middle">프록시 · 정책 검사</text>
-
-    <!-- 샌드박스 사이 -->
-    <line class="a a-deny" x1="504" y1="185" x2="576" y2="185" stroke-dasharray="4 4"/>
-    <line class="a a-deny" x1="534" y1="179" x2="546" y2="191"/><line class="a a-deny" x1="546" y1="179" x2="534" y2="191"/>
-    <text class="l l-deny" x="540" y="212" text-anchor="middle">직접</text>
-    <text class="l l-deny" x="540" y="227" text-anchor="middle">통신 없음</text>
-
     <!-- 샌드박스: team -->
-    <rect class="sb plan" x="580" y="110" width="335" height="240" rx="10"/>
-    <text class="tm" x="596" y="137">team</text>
-    <text class="s" x="899" y="137" text-anchor="end">업무 내부 등급</text>
-    <line class="a a-allow" x1="660" y1="110" x2="660" y2="70" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="668" y="95">추론 · 시연에서는 외부 API</text>
-    <rect class="bx" x="595" y="152" width="80" height="66" rx="6"/>
-    <text class="t" x="635" y="180" text-anchor="middle">비서</text>
-    <text class="s" x="635" y="200" text-anchor="middle">main</text>
-    <rect class="bx" x="690" y="152" width="90" height="66" rx="6"/>
-    <text class="t" x="735" y="180" text-anchor="middle">업무 에이전트</text>
-    <text class="s" x="735" y="200" text-anchor="middle">task-orbit</text>
-    <rect class="bx" x="820" y="152" width="80" height="66" rx="6"/>
-    <text class="t" x="860" y="180" text-anchor="middle">기밀 검토</text>
-    <text class="s" x="860" y="200" text-anchor="middle">censor-public</text>
-    <line class="a a-ink" x1="780" y1="185" x2="818" y2="185" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="800" y="177" text-anchor="middle">원문</text>
-    <line class="a a-ink" x1="860" y1="218" x2="860" y2="274" marker-end="url(#h-ink)"/>
-    <rect class="proxy" x="595" y="275" width="305" height="40" rx="6"/>
-    <text class="t" x="747" y="300" text-anchor="middle">프록시 · 정책 검사</text>
+    <rect class="sb plan" x="40" y="110" width="840" height="240" rx="10"/>
+    <text class="tm" x="56" y="137">team</text>
+    <text class="s" x="864" y="137" text-anchor="end">기밀 영역 · 업무 내부 등급</text>
+    <line class="a a-allow" x1="130" y1="110" x2="130" y2="70" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="138" y="95">추론 · 시연에서는 외부 API</text>
+
+    <rect class="bx" x="60" y="152" width="140" height="66" rx="6"/>
+    <text class="t" x="130" y="180" text-anchor="middle">head agent</text>
+    <text class="s" x="130" y="200" text-anchor="middle">비서 · 업무를 고름</text>
+    <rect class="bx" x="240" y="152" width="140" height="66" rx="6"/>
+    <text class="t" x="310" y="180" text-anchor="middle">실무 에이전트</text>
+    <text class="s" x="310" y="200" text-anchor="middle">ORBIT 벤치마크</text>
+    <rect class="bx" x="400" y="152" width="140" height="66" rx="6"/>
+    <text class="t" x="470" y="180" text-anchor="middle">실무 에이전트</text>
+    <text class="s" x="470" y="200" text-anchor="middle">양자화 조사</text>
+    <rect class="bx" x="560" y="152" width="140" height="66" rx="6"/>
+    <text class="t" x="630" y="180" text-anchor="middle">실무 에이전트</text>
+    <text class="s" x="630" y="200" text-anchor="middle">PRISM 개발</text>
+    <rect class="bx" x="730" y="152" width="130" height="66" rx="6"/>
+    <text class="t" x="795" y="180" text-anchor="middle">검열 에이전트</text>
+    <text class="s" x="795" y="200" text-anchor="middle">비기밀용, 기밀용</text>
+
+    <line class="a a-ink" x1="200" y1="185" x2="239" y2="185" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="700" y1="185" x2="729" y2="185" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="795" y1="218" x2="795" y2="274" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="130" y1="218" x2="130" y2="274" marker-end="url(#h-ink)"/>
+
+    <rect class="bx" x="60" y="275" width="800" height="40" rx="6"/>
+    <text class="t" x="460" y="300" text-anchor="middle">프록시 · 정책 검사 · 나가는 요청은 모두 여기를 지남</text>
 
     <!-- 구조만: company, division -->
     <rect class="sb plan" x="935" y="110" width="130" height="110" rx="10"/>
@@ -186,115 +164,98 @@
     <text class="s" x="1000" y="323" text-anchor="middle">구조만</text>
 
     <!-- 호스트 -->
-    <rect class="zone" x="20" y="460" width="1060" height="180" rx="10"/>
-    <text class="s" x="40" y="483">호스트 · WSL</text>
-    <rect class="bx" x="40" y="495" width="200" height="120" rx="6"/>
-    <text class="tm" x="140" y="530" text-anchor="middle">review :8790</text>
-    <text class="s" x="140" y="553" text-anchor="middle">결재 문서, 스캐너</text>
-    <text class="s" x="140" y="573" text-anchor="middle">서명, 결재 웹</text>
-    <rect class="bx plan" x="280" y="495" width="180" height="120" rx="6"/>
-    <text class="tm" x="370" y="530" text-anchor="middle">GitHub MCP :8792</text>
-    <text class="s" x="370" y="553" text-anchor="middle">읽기 도구만 노출</text>
-    <text class="s" x="370" y="573" text-anchor="middle">아직 안 띄움</text>
-    <rect class="bx" x="500" y="495" width="200" height="120" rx="6"/>
-    <text class="tm" x="600" y="530" text-anchor="middle">knowledge :8791</text>
-    <text class="s" x="600" y="553" text-anchor="middle">지금은 합성 자료 stub</text>
-    <text class="s" x="600" y="573" text-anchor="middle">목표: 걸러낸 답변만</text>
-    <rect class="bx plan" x="760" y="495" width="300" height="120" rx="6"/>
-    <text class="tm" x="910" y="530" text-anchor="middle">Ollama :11434</text>
-    <text class="s" x="910" y="553" text-anchor="middle">시연에서는 쓰지 않음</text>
-    <text class="s" x="910" y="573" text-anchor="middle">목표 구조에서 기밀 등급의 추론</text>
+    <rect class="zone" x="20" y="440" width="1060" height="200" rx="10"/>
+    <text class="s" x="1060" y="463" text-anchor="end">호스트 · WSL</text>
+    <rect class="bx" x="40" y="495" width="210" height="120" rx="6"/>
+    <text class="tm" x="145" y="530" text-anchor="middle">review :8790</text>
+    <text class="s" x="145" y="553" text-anchor="middle">기록, 코드 검사, 서명</text>
+    <text class="s" x="145" y="573" text-anchor="middle">기밀 검사 화면, 게시</text>
+    <rect class="bx" x="290" y="495" width="190" height="120" rx="6"/>
+    <text class="tm" x="385" y="530" text-anchor="middle">knowledge :8791</text>
+    <text class="s" x="385" y="553" text-anchor="middle">공개 쪽이 부르는 곳</text>
+    <text class="s" x="385" y="573" text-anchor="middle">승인된 지식만 돌려줌</text>
+    <rect class="bx" x="520" y="495" width="220" height="120" rx="6"/>
+    <text class="t" x="630" y="530" text-anchor="middle">대응 에이전트</text>
+    <text class="s" x="630" y="553" text-anchor="middle">LangGraph 모듈 · 하나</text>
+    <text class="s" x="630" y="573" text-anchor="middle">샌드박스 없음 · 다듬기만</text>
 
-    <!-- public → 호스트 -->
-    <line class="a a-allow" x1="90" y1="315" x2="90" y2="494" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="98" y="412">초안 제출</text>
-
-    <line class="a a-deny" x1="190" y1="315" x2="190" y2="362"/>
-    <line class="a a-deny" x1="184" y1="362" x2="196" y2="374"/><line class="a a-deny" x1="196" y1="362" x2="184" y2="374"/>
-    <text class="l l-deny" x="198" y="392">승인·거절</text>
-
-    <line class="a a-deny" x1="285" y1="315" x2="285" y2="362"/>
-    <line class="a a-deny" x1="279" y1="362" x2="291" y2="374"/><line class="a a-deny" x1="291" y1="362" x2="279" y2="374"/>
-    <text class="l l-deny" x="293" y="392">그 밖의 주소</text>
-
-    <line class="a a-allow" x1="380" y1="315" x2="380" y2="494" stroke-dasharray="6 4" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="388" y="412">멘션 읽기</text>
-
-    <polyline class="a a-allow" points="470,315 470,438 560,438 560,494" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="478" y="430">질문</text>
+    <line class="a a-ink" x1="250" y1="555" x2="289" y2="555" marker-end="url(#h-ink)"/>
+    <line class="a a-ink" x1="480" y1="555" x2="519" y2="555" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="385" y="607" text-anchor="middle">승인된 지식</text>
+    <polyline class="a a-ink" points="630,495 630,478 190,478 190,494" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="410" y="471" text-anchor="middle">다듬은 글 제출</text>
 
     <!-- team → 호스트 -->
-    <line class="a a-allow" x1="640" y1="315" x2="640" y2="494" stroke-dasharray="6 4" marker-end="url(#h-allow)"/>
-    <text class="l l-allow" x="648" y="412">걸러낸 답변 · 목표 구조, 방식 미정</text>
+    <line class="a a-allow" x1="110" y1="315" x2="110" y2="494" stroke-dasharray="6 4" marker-end="url(#h-allow)"/>
+    <text class="l l-allow" x="118" y="400">질문 받기, 검열 결과 올리기</text>
+    <text class="s" x="118" y="417">방식 미정</text>
+
+    <line class="a a-deny" x1="330" y1="315" x2="330" y2="362"/>
+    <line class="a a-deny" x1="324" y1="362" x2="336" y2="374"/><line class="a a-deny" x1="336" y1="362" x2="324" y2="374"/>
+    <text class="l l-deny" x="338" y="392">승인·거절</text>
+
+    <line class="a a-deny" x1="450" y1="315" x2="450" y2="362"/>
+    <line class="a a-deny" x1="444" y1="362" x2="456" y2="374"/><line class="a a-deny" x1="456" y1="362" x2="444" y2="374"/>
+    <text class="l l-deny" x="458" y="392">공개 쪽 서비스</text>
+
+    <line class="a a-deny" x1="600" y1="315" x2="600" y2="362"/>
+    <line class="a a-deny" x1="594" y1="362" x2="606" y2="374"/><line class="a a-deny" x1="606" y1="362" x2="594" y2="374"/>
+    <text class="l l-deny" x="608" y="392">그 밖의 모든 주소</text>
 
     <!-- 호스트 바깥 -->
-    <rect class="bx" x="60" y="700" width="140" height="52" rx="6"/>
-    <text class="t" x="130" y="731" text-anchor="middle">사람 · 브라우저</text>
-    <line class="a a-ink" x1="110" y1="700" x2="110" y2="616" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="118" y="676">승인·거절</text>
+    <rect class="bx" x="40" y="700" width="140" height="52" rx="6"/>
+    <text class="t" x="110" y="731" text-anchor="middle">사람 · 브라우저</text>
+    <line class="a a-ink" x1="90" y1="700" x2="90" y2="616" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="82" y="662" text-anchor="end">기밀 검사</text>
+    <text class="l l-ink" x="82" y="678" text-anchor="end">승인</text>
 
-    <rect class="bx" x="330" y="700" width="430" height="52" rx="6"/>
-    <text class="t" x="545" y="731" text-anchor="middle">GitHub</text>
-    <polyline class="a a-ink" points="220,615 220,665 350,665 350,699" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="228" y="657">게시 · 서명 확인 후</text>
-    <line class="a a-ink" x1="420" y1="615" x2="420" y2="699" stroke-dasharray="6 4" marker-end="url(#h-ink)"/>
-    <text class="l l-ink" x="428" y="680">읽기</text>
+    <rect class="bx" x="760" y="700" width="300" height="52" rx="6"/>
+    <text class="t" x="910" y="731" text-anchor="middle">GitHub</text>
+    <polyline class="a a-ink" points="160,615 160,668 860,668 860,699" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="500" y="661" text-anchor="middle">게시 · 서명 확인 후</text>
+    <polyline class="a a-ink" points="940,699 940,555 741,555" marker-end="url(#h-ink)"/>
+    <text class="l l-ink" x="948" y="640">멘션 읽기</text>
   </svg>
   </div>
   <ul class="legend">
     <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-allow" x1="1" y1="6" x2="36" y2="6"/></svg>정책이 허용</li>
     <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-deny" x1="1" y1="6" x2="24" y2="6"/><line class="a a-deny" x1="27" y1="1" x2="37" y2="11"/><line class="a a-deny" x1="37" y1="1" x2="27" y2="11"/></svg>프록시에서 차단</li>
-    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-ink" x1="1" y1="6" x2="36" y2="6"/></svg>정책 바깥의 흐름</li>
+    <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-ink" x1="1" y1="6" x2="36" y2="6"/></svg>샌드박스 밖의 흐름</li>
     <li><svg viewBox="0 0 38 12" aria-hidden="true"><line class="a a-ink" x1="1" y1="6" x2="36" y2="6" stroke-dasharray="6 4"/></svg>점선은 아직 없는 것</li>
   </ul>
-  <figcaption>두 샌드박스는 파일, 기억, 네트워크 정책이 따로이고 서로 직접 통신하지 않는다. 추론만 같은 gateway를 거쳐 같은 외부 제공자로 나간다. 승인 버튼과 게시 토큰은 호스트에만 있어서, 에이전트가 속아도 게시까지 갈 수 없다.</figcaption>
+  <figcaption>샌드박스가 막는 것은 기밀 영역에서 밖으로 나가는 길이다. 호스트 안에서 도는 대응 에이전트는 샌드박스가 막아 주지 않으므로, 승인된 지식만 받게 하고 승인 주소는 토큰으로 막는다.</figcaption>
 </figure>
 
 <section>
-  <h2>시연 구성과 목표 구조</h2>
-  <p>OpenShell은 gateway 하나에 추론 경로를 하나만 둔다. 같은 gateway의 샌드박스들은 그 경로를 같이 쓴다. 등급마다 다른 제공자를 쓰려면 gateway를 나눠야 하는데, 시연에서는 나누지 않고 모두 외부 API를 쓴다.</p>
-  <div class="tablewrap" style="margin-top:14px">
+  <h2>무엇이 어디서 도는가</h2>
+  <div class="tablewrap">
   <table>
-    <thead><tr><th></th><th>해커톤 시연</th><th>목표 구조</th></tr></thead>
+    <thead><tr><th>도는 곳</th><th>무엇</th><th>막아 주는 것</th><th>상태</th></tr></thead>
     <tbody>
-      <tr><td><code>public</code>의 추론</td><td>NVIDIA Endpoints</td><td>NVIDIA Endpoints</td></tr>
-      <tr><td><code>team</code>의 추론</td><td>NVIDIA Endpoints</td><td>이 PC의 Ollama</td></tr>
-      <tr><td>gateway</td><td><code>8080</code> 하나</td><td>공개용 <code>8080</code>, 기밀용 <code>8090</code></td></tr>
-      <tr><td>기밀 검토가 도는 곳</td><td>지금 구현대로 <code>public</code> 안. 옮기는 것은 시간이 되면</td><td><code>team</code> 안. 걸러낸 답변만 밖으로</td></tr>
-      <tr><td>넣을 수 있는 자료</td><td><span class="pill off">합성 자료만</span></td><td>실제 업무 자료</td></tr>
+      <tr><td>샌드박스 <code>team</code></td><td>head agent, 실무 에이전트 셋, 검열 에이전트 둘</td><td>프록시의 네트워크 정책, 파일시스템 정책, 에이전트별 도구 제한</td><td><span class="pill plan">아직 안 만듦</span></td></tr>
+      <tr><td>호스트</td><td>대응 에이전트 (LangGraph 모듈)</td><td>도구 없음. 그래프가 부를 곳을 정함</td><td><span class="pill on">RFA_module에서 실행 확인</span></td></tr>
+      <tr><td>호스트</td><td>review <code>:8790</code>, knowledge <code>:8791</code></td><td>승인용 토큰 (아직 없음), 서명 토큰</td><td><span class="pill on">실행 중</span></td></tr>
+      <tr><td>호스트</td><td>OpenShell gateway <code>:8080</code></td><td>API 키를 샌드박스에 주지 않음</td><td><span class="pill on">실행 중</span></td></tr>
     </tbody>
   </table>
   </div>
-  <p style="margin-top:12px" class="lede">시연에서 <code>team</code>의 프롬프트는 외부 제공자로 나간다. 실제 업무 자료를 넣으면 그대로 나가므로, 시연 지식은 RFA_module의 합성 자료만 쓴다.</p>
 </section>
 
 <section>
-  <h2>샌드박스마다 붙는 설정</h2>
+  <h2>샌드박스에 붙는 설정</h2>
   <div class="cards">
-
-    <div class="card">
-      <div class="card-head"><b>public</b><span class="pill plan">아직 안 만듦</span></div>
-      <dl>
-        <dt>등급</dt><dd>공개. 독자는 인터넷</dd>
-        <dt>에이전트</dt><dd><code>main</code> 잠금, <code>public-desk</code>, 워크플로(python 프로세스)</dd>
-        <dt>도구</dt><dd><code>public-desk</code>는 멘션 읽기, 스레드 읽기, 워크플로 실행만</dd>
-        <dt>추론</dt><dd>NVIDIA Endpoints</dd>
-        <dt>나가는 곳</dt><dd>review 읽기와 제출, knowledge 질문, GitHub MCP 읽기</dd>
-        <dt>막는 것</dt><dd>승인, 거절, 재게시, 기준 변경, 결재 웹, 그 밖의 모든 주소</dd>
-        <dt>설정 파일</dt><dd><code>agents/public.yaml</code><br><code>policies/rfa-host-services.yaml</code></dd>
-      </dl>
-    </div>
 
     <div class="card">
       <div class="card-head"><b>team</b><span class="pill plan">아직 안 만듦</span></div>
       <dl>
-        <dt>등급</dt><dd>업무 내부. 독자는 업무 담당자</dd>
-        <dt>에이전트</dt><dd>비서(<code>main</code>), 업무 에이전트(<code>task-orbit</code>), 기밀 검토(<code>censor-public</code>)</dd>
-        <dt>도구</dt><dd>파일 읽기만. MCP 도구는 정해지면 하나씩 추가</dd>
+        <dt>등급</dt><dd>업무 내부</dd>
+        <dt>에이전트</dt><dd>head agent(<code>main</code>), 실무 에이전트(<code>task-*</code>), 검열 에이전트(<code>censor-*</code>)</dd>
+        <dt>도구</dt><dd>파일 읽기만. 셸, 웹, 브라우저는 거부</dd>
         <dt>추론</dt><dd>시연은 NVIDIA Endpoints. 목표 구조는 이 PC의 Ollama</dd>
-        <dt>나가는 곳</dt><dd>걸러낸 답변을 넘길 호스트 서비스. 방식 미정</dd>
-        <dt>자료</dt><dd>합성 자료만</dd>
-        <dt>설정 파일</dt><dd><code>agents/team.yaml</code> 초안. 정책 파일은 아직 없음</dd>
+        <dt>나가는 곳</dt><dd>호스트에서 질문을 받고 검열 결과를 올리는 주소. 아직 정하지 않음</dd>
+        <dt>막는 것</dt><dd>승인과 거절, 공개 쪽이 부르는 서비스, 그 밖의 모든 주소</dd>
+        <dt>자료</dt><dd>시연에는 합성 자료만</dd>
+        <dt>설정 파일</dt><dd><code>agents/team.yaml</code> 초안. 네트워크 정책 파일은 아직 없음</dd>
       </dl>
     </div>
 
@@ -302,13 +263,37 @@
       <div class="card-head"><b>company · division</b><span class="pill off">구조만</span></div>
       <dl>
         <dt>등급</dt><dd>회사 내, 사업부 내</dd>
-        <dt>에이전트</dt><dd>사내 질문 대응, 사내 채널 게시</dd>
-        <dt>추론</dt><dd>목표 구조에서 Ollama</dd>
+        <dt>쓰임</dt><dd>사내 채널로 나가는 글을 다룰 때</dd>
         <dt>설정 파일</dt><dd>없음</dd>
       </dl>
       <div class="note">첫 구현에서는 만들지 않는다. 실제로 연동하는 채널이 공개 GitHub 하나이기 때문이다.</div>
     </div>
 
+    <div class="card">
+      <div class="card-head"><b>공개 쪽</b><span class="pill off">샌드박스 없음</span></div>
+      <dl>
+        <dt>도는 것</dt><dd>대응 에이전트 하나. 호스트에서 돈다</dd>
+        <dt>이유</dt><dd>승인된 지식만 들어오고, 도구 없이 다듬기만 한다</dd>
+        <dt>쓰지 않는 파일</dt><dd><code>agents/public.yaml</code><br><code>policies/rfa-host-services.yaml</code></dd>
+      </dl>
+      <div class="note">앞서 공개 쪽 샌드박스에서 확인한 차단 결과는 <code>docs/nemoclaw/03-policy-verification.md</code>에 기록으로 남아 있다.</div>
+    </div>
+
+  </div>
+</section>
+
+<section>
+  <h2>시연 구성과 목표 구조</h2>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th></th><th>해커톤 시연</th><th>목표 구조</th></tr></thead>
+    <tbody>
+      <tr><td><code>team</code>의 추론</td><td>NVIDIA Endpoints</td><td>이 PC의 Ollama</td></tr>
+      <tr><td>대응 에이전트의 추론</td><td>NVIDIA Endpoints</td><td>공개 채널은 외부 제공자. 사내 채널은 다시 정함</td></tr>
+      <tr><td>gateway</td><td><code>8080</code> 하나</td><td>기밀용을 따로</td></tr>
+      <tr><td>넣을 수 있는 자료</td><td><span class="pill off">합성 자료만</span></td><td>실제 업무 자료</td></tr>
+    </tbody>
+  </table>
   </div>
 </section>
 
@@ -318,64 +303,25 @@
   <table>
     <thead><tr><th>샌드박스</th><th>만든 목적</th><th>앞으로</th></tr></thead>
     <tbody>
-      <tr><td><code>my-assistant</code></td><td>설치 확인, 네트워크 정책 검증. 검증용으로 <code>rfa-host-services</code> 정책이 붙어 있음</td><td>비서를 <code>team</code>으로 옮기고 정리</td></tr>
-      <tr><td><code>rfa</code></td><td>에이전트 명단을 넣어 만들어 봄</td><td>지우고 <code>public</code>으로 다시 만듦</td></tr>
+      <tr><td><code>my-assistant</code></td><td>설치 확인, 네트워크 정책 검증</td><td>정리</td></tr>
+      <tr><td><code>rfa</code></td><td>에이전트 명단을 넣어 만들어 봄</td><td>정리</td></tr>
     </tbody>
   </table>
   </div>
-  <p style="margin-top:12px" class="lede">옛 이름의 두 샌드박스는 같은 gateway(8080)를 쓴다. 샌드박스 상태는 작업 중에 계속 바뀌므로 <code>nemoclaw list</code>로 확인한다.</p>
-</section>
-
-<section>
-  <h2>한 샌드박스 안과 샌드박스 사이의 차이</h2>
-  <div class="tablewrap">
-  <table>
-    <thead><tr><th></th><th>샌드박스를 나눔</th><th>한 샌드박스 안에서 에이전트를 나눔</th></tr></thead>
-    <tbody>
-      <tr><td>설정 파일</td><td><code>policies/*.yaml</code></td><td><code>agents/*.yaml</code></td></tr>
-      <tr><td>누가 집행</td><td>OpenShell 프록시와 커널</td><td>OpenClaw 런타임</td></tr>
-      <tr><td>파일시스템, 기억</td><td>따로</td><td>같이 씀</td></tr>
-      <tr><td>네트워크 정책</td><td>샌드박스마다 따로</td><td>같이 씀. 정책은 프로그램 단위라 에이전트를 구분하지 못함</td></tr>
-      <tr><td>추론 경로</td><td>gateway가 같으면 같이 씀. 시연에서는 같이 씀</td><td>같이 씀</td></tr>
-      <tr><td>쓰임</td><td>기밀 등급을 가를 때</td><td>같은 등급 안에서 역할만 가를 때</td></tr>
-    </tbody>
-  </table>
-  </div>
-</section>
-
-<section>
-  <h2>경로별 판정과 확인 상태</h2>
-  <div class="tablewrap">
-  <table>
-    <thead><tr><th>경로</th><th>판정</th><th>막거나 여는 곳</th><th>확인</th></tr></thead>
-    <tbody>
-      <tr><td>python → review 읽기, knowledge 질문</td><td><span class="pill on">허용</span></td><td><code>rfa-host-services</code></td><td>200 확인 (<code>my-assistant</code>)</td></tr>
-      <tr><td>python → review 초안, 판정 제출 (<code>POST</code>)</td><td><span class="pill on">허용</span></td><td><code>rfa-host-services</code></td><td>규칙은 적용됨. 실제 호출은 아직</td></tr>
-      <tr><td>샌드박스 → 승인, 거절 (IP로)</td><td><span class="pill off">차단</span></td><td>프록시 <code>deny_rules</code></td><td>403 확인</td></tr>
-      <tr><td>샌드박스 → 승인 (<code>host.docker.internal</code>, <code>host.openshell.internal</code>로)</td><td><span class="pill off">차단</span></td><td>허용 목록에 없음</td><td>403 확인</td></tr>
-      <tr><td>샌드박스 → 결재 웹, 허용 안 된 포트, 그 밖의 주소</td><td><span class="pill off">차단</span></td><td>기본 정책</td><td>차단 확인</td></tr>
-      <tr><td>python 아닌 프로그램 → review</td><td><span class="pill off">차단</span></td><td>정책의 프로그램 제한</td><td>curl 403 확인</td></tr>
-      <tr><td><code>public-desk</code> → GitHub MCP 읽기</td><td><span class="pill plan">예정</span></td><td><code>nemoclaw public mcp add</code></td><td>서버를 아직 안 띄움</td></tr>
-      <tr><td><code>team</code> → 걸러낸 답변 전달</td><td><span class="pill plan">예정</span></td><td>정책 파일 아직 없음</td><td>전달 방식부터 정해야 함</td></tr>
-      <tr><td>사람 → 승인, 거절</td><td><span class="pill on">허용</span></td><td>review 서비스의 출처 검사</td><td>컨테이너가 <code>host.docker.internal</code>로 보내면 통과됨. 토큰 방식 제안</td></tr>
-      <tr><td>review → GitHub 게시</td><td><span class="pill on">허용</span></td><td>서명 토큰과 본문 해시 대조</td><td>RFA_module 테스트 통과</td></tr>
-    </tbody>
-  </table>
-  </div>
+  <p style="margin-top:12px" class="lede">샌드박스 상태는 작업 중에 계속 바뀌므로 <code>nemoclaw list</code>로 확인한다.</p>
 </section>
 
 <section>
   <h2>아직 확인하지 못한 것</h2>
   <ul class="open">
-    <li><b>샌드박스 두 개를 한 gateway에.</b> <code>public</code>과 <code>team</code>을 같이 띄웠을 때의 메모리와, 서로의 파일과 경로에 닿지 못하는지.</li>
-    <li><b>기밀 검토의 위치.</b> 지금 구현은 기밀 검토가 외부 대응 쪽에서 돈다. <code>team</code>으로 옮기려면 RFA_module과 knowledge API가 함께 바뀌어야 한다. 팀 확인 전이다.</li>
-    <li><b>걸러낸 답변을 넘기는 방식.</b> 샌드박스는 밖으로 요청을 보낼 수만 있다. <code>team</code>이 호스트에 밀어 넣을지, 호스트가 <code>team</code>의 에이전트를 부를지 정하지 않았다.</li>
-    <li><b>모델 호출 방식.</b> 샌드박스의 <code>inference.local</code>은 OpenAI 방식만 받는다. 워크플로는 Anthropic 방식을 쓴다.</li>
-    <li><b>외부 API의 한도.</b> 무료 한도(분당 약 40회)를 두 샌드박스가 같이 쓴다. 워크플로 한 번에 모델을 여러 번 부른다.</li>
-    <li><b>도구 이름과 도구 거부의 실제 동작.</b> 명단은 검증기를 통과했지만 샌드박스에 구워 확인하지 않았다.</li>
+    <li><b><code>team</code>이 호스트와 주고받는 방식.</b> 샌드박스는 밖으로 요청을 보낼 수만 있다. <code>team</code>이 호스트에 물어볼지, 호스트가 <code>team</code>의 에이전트를 부를지 정하지 않았다.</li>
+    <li><b><code>team</code>의 네트워크 정책.</b> 위 방식이 정해져야 쓸 수 있다.</li>
+    <li><b>도구 거부의 실제 동작.</b> 명단은 검증기를 통과했지만 샌드박스에 구워 확인하지 않았다.</li>
+    <li><b>승인용 토큰.</b> 대응 에이전트가 호스트에서 돌면 출처 주소 검사로는 승인 주소를 막을 수 없다.</li>
+    <li><b>실무 에이전트 셋을 한 샌드박스에 둘지.</b> 한 샌드박스 안에서는 서로의 기억을 막을 수 없다.</li>
   </ul>
 </section>
 
-<footer>근거: <code>docs/architecture-decisions.md</code>, <code>docs/milestone.md</code>, <code>docs/nemoclaw/03-policy-verification.md</code>, <code>policies/README.md</code></footer>
+<footer>근거: <code>docs/architecture-decisions.md</code> 15절, <code>docs/milestone.md</code>, <code>docs/agent-zones.html</code>, <code>docs/nemoclaw/03-policy-verification.md</code></footer>
 
 </div>
