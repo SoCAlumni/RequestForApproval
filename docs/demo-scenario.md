@@ -18,7 +18,7 @@
 
 ### 3. 녹화본 (게스트 화면, 약 2분 30초)
 
-영상: [demo/demo.mp4](demo/demo.mp4). 2026-09-28 녹화, 2분 38초, 소리 없음.
+영상 v1: [demo/demo-v1.mp4](demo/demo-v1.mp4). 2026-09-28 녹화, 2분 38초, 소리 없음.
 
 게스트는 사외 등급 항목만 보고 쓰기를 할 수 없다. 그래서 이 녹화본은 읽기와 채팅만으로 구성한다.
 
@@ -65,4 +65,4 @@ DEMO_URL=<화면 주소> node scripts/record_demo.cjs
 ```
 
 - `playwright` 패키지와 Chromium, 자막을 입힐 `ffmpeg`가 필요하다.
-- 결과물은 `demo-video/`에 생긴다. 제출할 영상만 골라 `docs/demo/demo.mp4`로 옮긴다.
+- 결과물은 `demo-video/`에 생긴다. 제출할 영상만 골라 `docs/demo/`에 판 번호를 붙여 옮긴다.
