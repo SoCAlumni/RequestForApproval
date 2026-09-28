@@ -35,4 +35,5 @@
 | [docs/architecture-decisions.md](docs/architecture-decisions.md) | 아키텍처 결정과 이유 |
 | [docs/nemoclaw/](docs/nemoclaw/README.md) | NemoClaw 설치, 정책 검증, 샌드박스 설정 |
 | [docs/ports.md](docs/ports.md) | 포트 정리 |
+| [docs/demo-scenario.md](docs/demo-scenario.md) | 시연 시나리오. 영상은 [docs/demo/demo.mp4](docs/demo/demo.mp4) |
 | [policies/README.md](policies/README.md) | 네트워크 정책 설명 |
